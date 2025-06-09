@@ -1,1 +1,38 @@
-<p>navbar works!</p>
+<nav class="fixed top-0 left-0 w-full bg-white shadow-md z-50">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="text-xl font-bold text-gray-800">ERP Dashboard</div>
+
+    <ul class="flex space-x-6 text-gray-700 font-medium">
+      <li>
+        <a
+          routerLink="/home"
+          routerLinkActive="text-blue-500"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="cursor-pointer"
+        >
+          Home
+        </a>
+      </li>
+      <li>
+        <a
+          routerLink="/about"
+          routerLinkActive="text-blue-500"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="cursor-pointer"
+        >
+          About
+        </a>
+      </li>
+      <li>
+        <a
+          routerLink="/login"
+          routerLinkActive="text-blue-500"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="cursor-pointer"
+        >
+          Login
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>

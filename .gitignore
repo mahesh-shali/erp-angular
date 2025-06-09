@@ -6,6 +6,7 @@
 /out-tsc
 /bazel-out
 
+
 # Node
 /node_modules
 npm-debug.log
@@ -15,6 +16,8 @@ yarn-error.log
 .idea/
 .project
 .classpath
+.vscode/
+
 .c9/
 *.launch
 .settings/
