@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-interface LoginPayload {
+export interface LoginPayload {
   email: string;
   password: string;
 }
@@ -10,12 +10,12 @@ interface LoginPayload {
 @Injectable({
   providedIn: 'root',
 })
-export class Auth {
-  private apiUrl = 'http://localhost:5133/api/auth';
+export class AuthService {
+  private apiUrl = 'http://localhost:5133/api/auth/login';
 
   constructor(private http: HttpClient) {}
 
-  login(payload: LoginPayload): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, payload);
+  login(dto: LoginPayload): Observable<any> {
+    return this.http.post<any>(this.apiUrl, dto);
   }
 }
