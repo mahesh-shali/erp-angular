@@ -23,7 +23,9 @@
           About
         </a>
       </li>
-      <li>
+
+      <!-- Login -->
+      <li *ngIf="!auth.isLoggedIn() && !isLoginPage()">
         <a
           routerLink="/login"
           routerLinkActive="text-blue-500"
@@ -32,6 +34,11 @@
         >
           Login
         </a>
+      </li>
+
+      <!-- Logout -->
+      <li *ngIf="auth.isLoggedIn() && !isLoginPage()">
+        <a (click)="logout()" class="cursor-pointer text-red-500"> Logout </a>
       </li>
     </ul>
   </div>
