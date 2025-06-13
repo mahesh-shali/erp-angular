@@ -18,4 +18,14 @@ export class AuthService {
   login(dto: LoginPayload): Observable<any> {
     return this.http.post<any>(this.apiUrl, dto);
   }
+
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('token'); // or sessionStorage
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('roleId');
+    // add other user data if needed
+  }
 }

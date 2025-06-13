@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
-// import { Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +18,11 @@ import { AuthService } from '../../services/auth';
 })
 export class Login implements OnInit {
   loginForm: FormGroup;
-  constructor(private fb: FormBuilder, private auth: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private router: Router
+  ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
@@ -33,11 +37,29 @@ export class Login implements OnInit {
       const { email, password } = this.loginForm.value;
       const dto = { email, password };
       this.auth.login(dto).subscribe({
-        next: (response: { token: string }) => {
+        next: (response: { token: string; roleId: number }) => {
           console.log('Login success:', response);
-          // e.g., save token and redirect
+
           localStorage.setItem('token', response.token);
-          this.router.navigate(['/dashboard']); // adjust path as needed
+          localStorage.setItem('roleId', response.roleId.toString());
+
+          // Route based on role
+          switch (response.roleId) {
+            case 1:
+              this.router.navigate(['/s/dashboard']);
+              break;
+            case 2:
+              this.router.navigate(['/a/dashboard']);
+              break;
+            case 3:
+              this.router.navigate(['/manager/dashboard']);
+              break;
+            case 4:
+              this.router.navigate(['/user/dashboard']);
+              break;
+            default:
+              alert('Unknown role!');
+          }
         },
         error: (error: any) => {
           console.error('Login failed:', error);
