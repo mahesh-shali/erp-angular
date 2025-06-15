@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface LoginPayload {
   email: string;
@@ -27,5 +27,14 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('roleId');
     // add other user data if needed
+  }
+}
+
+export class SectionService {
+  private sectionSource = new BehaviorSubject<string | null>(null);
+  section$ = this.sectionSource.asObservable();
+
+  setSection(section: string) {
+    this.sectionSource.next(section);
   }
 }
