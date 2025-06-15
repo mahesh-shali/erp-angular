@@ -1,7 +1,11 @@
 <app-navbar></app-navbar>
 
 <main class="pt-16 min-h-screen bg-gray-100 flex flex-col">
-  
+  <app-sidenavbar
+    *ngIf="authService.isLoggedIn()"
+    (sectionSelected)="handleSection($event)"
+  ></app-sidenavbar>
+  <app-subsidenavbar [section]="selectedSection"></app-subsidenavbar>
+  <!-- <app-home [section]="selectedSection"></app-home> -->
   <router-outlet></router-outlet>
-
 </main>

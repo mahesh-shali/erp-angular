@@ -1,0 +1,16 @@
+<div
+  class="h-screen bg-gray-200 flex flex-col border-r p-4 ml-38 top-13 fixed"
+  *ngIf="section"
+>
+  <ng-container *ngIf="sectionOptions[section]; else noOptions">
+    <div
+      *ngFor="let option of sectionOptions[section]"
+      class="mb-2 cursor-pointer hover:underline"
+    >
+      {{ option }}
+    </div>
+  </ng-container>
+  <ng-template #noOptions>
+    <div>Select a menu</div>
+  </ng-template>
+</div>
