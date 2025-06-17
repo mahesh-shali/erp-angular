@@ -2,13 +2,16 @@
   class="h-screen bg-gray-200 flex flex-col border-r p-4 ml-38 top-13 fixed"
   *ngIf="section"
 >
-  <ng-container *ngIf="sectionOptions[section]; else noOptions">
-    <div
+  <ng-container *ngIf="sectionOptions[section]?.length; else noOptions">
+    <a
       *ngFor="let option of sectionOptions[section]"
-      class="mb-2 cursor-pointer hover:underline"
+      [routerLink]="option.path"
+      routerLinkActive="bg-gray-100 rounded px-2"
+      class="mb-2 cursor-pointer hover:underline text-blue-600 block py-1"
+      [routerLinkActiveOptions]="{ exact: true }"
     >
-      {{ option }}
-    </div>
+      {{ option.label }}
+    </a>
   </ng-container>
   <ng-template #noOptions>
     <div>Select a menu</div>
