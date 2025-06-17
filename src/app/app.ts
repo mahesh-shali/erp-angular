@@ -6,6 +6,8 @@ import { CommonModule, NgIf } from '@angular/common';
 import { AuthService, SectionService } from './services/auth';
 import { Subsidenavbar } from './components/subsidenavbar/subsidenavbar';
 import { Home } from './pages/home/home';
+import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +19,8 @@ import { Home } from './pages/home/home';
     CommonModule,
     RouterModule,
     Subsidenavbar,
+    MatIconModule,
+    FormsModule,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
