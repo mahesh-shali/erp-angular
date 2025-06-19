@@ -18,6 +18,8 @@ import { Router } from '@angular/router';
 })
 export class Login implements OnInit {
   loginForm: FormGroup;
+  isLoading = true;
+
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
@@ -29,7 +31,9 @@ export class Login implements OnInit {
     });
   }
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 200);
   }
 
   onSubmit() {
@@ -52,10 +56,10 @@ export class Login implements OnInit {
               this.router.navigate(['/a/dashboard']);
               break;
             case 3:
-              this.router.navigate(['/manager/dashboard']);
+              this.router.navigate(['/m/dashboard']);
               break;
             case 4:
-              this.router.navigate(['/user/dashboard']);
+              this.router.navigate(['/u/dashboard']);
               break;
             default:
               alert('Unknown role!');

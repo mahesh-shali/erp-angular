@@ -28,7 +28,12 @@ export class Navbar implements OnInit {
 
   logout() {
     this.auth.logout();
-    this.router.navigate(['/login']);
+    localStorage.removeItem('token');
+    localStorage.removeItem('roleId');
+
+    this.router.navigate(['/login']).then(() => {
+    window.location.reload();
+  });;
   }
   isLoginPage(): boolean {
     return this.router.url === '/login';
