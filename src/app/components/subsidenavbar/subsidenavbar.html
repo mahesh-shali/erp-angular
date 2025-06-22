@@ -1,4 +1,4 @@
-<div
+<!-- <div
   class="h-screen bg-gray-200 flex flex-col border-r p-4 ml-38 top-13 fixed"
   *ngIf="section"
 >
@@ -15,5 +15,27 @@
   </ng-container>
   <ng-template #noOptions>
     <div>Select a menu</div>
+  </ng-template>
+</div> -->
+
+<div
+  class="h-screen bg-gray-200 flex flex-col border-r p-4 ml-38 top-13 fixed"
+  *ngIf="section && section.toLowerCase() !== 'home'"
+>
+  <ng-container *ngIf="optionsForCurrentSection.length; else noOptions">
+    <a
+      *ngFor="let item of optionsForCurrentSection"
+      [routerLink]="item.route"
+      routerLinkActive="bg-gray-100 rounded px-2"
+      class="mb-2 cursor-pointer hover:underline text-blue-600 block py-1"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+      {{ item.option }}
+    </a>
+  </ng-container>
+
+  <ng-template #noOptions>
+    <div class="text-gray-500">No submenus available for this section.</div>
   </ng-template>
 </div>

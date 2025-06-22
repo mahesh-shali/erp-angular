@@ -55,6 +55,10 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('roleId');
+    localStorage.removeItem('subPermissions');
+    localStorage.removeItem('subPermissions:timestamp');
+    localStorage.removeItem('mainPermissions');
+    localStorage.removeItem('mainPermissions:timestamp');
     this._roleId.next(null);
   }
 }

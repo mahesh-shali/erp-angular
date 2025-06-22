@@ -8,6 +8,7 @@ import { Subsidenavbar } from './components/subsidenavbar/subsidenavbar';
 import { Home } from './pages/home/home';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -29,13 +30,17 @@ export class App {
   protected title = 'client';
   activeSection = '';
   selectedSection: string = '';
+  currentSection: string = '';
+
   constructor(
     public authService: AuthService,
-    private sectionService: SectionService
+    private sectionService: SectionService,
+    private http: HttpClient
   ) {}
   handleSection(section: string) {
     this.activeSection = section;
     this.selectedSection = section;
     this.sectionService.setSection(section);
+    this.currentSection = section;
   }
 }

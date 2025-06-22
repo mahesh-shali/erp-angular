@@ -1,3 +1,20 @@
+<!-- <div
+  class="w-38 h-screen bg-gray-800 text-white flex flex-col space-y-2 p-2 top-12 fixed mt-1"
+>
+  <button
+    *ngFor="let item of navItems"
+    (click)="selectSection(item.section)"
+    [ngClass]="{
+      'bg-gray-700': selectedSection === item.section,
+      'hover:bg-gray-700': true
+    }"
+    class="p-2 rounded flex items-center space-x-2"
+  >
+    <mat-icon>{{ item.icon }}</mat-icon>
+    <span>{{ item.label }}</span>
+  </button>
+</div> -->
+
 <div
   class="w-38 h-screen bg-gray-800 text-white flex flex-col space-y-2 p-2 top-12 fixed mt-1"
 >

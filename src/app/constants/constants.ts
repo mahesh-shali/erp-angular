@@ -1,9 +1,20 @@
 export interface SidebarItem {
+  id: number;
+  orguserid: number;
+  sidenavbarid: number;
+  canread: boolean;
+  canwrite: boolean;
+  canput: boolean;
+  candelete: boolean;
+  isvisible: boolean;
+  ishidden: boolean;
+  isrestricted: boolean;
   icon: string; // just the icon name or emoji as string
   label: string;
   section: string;
   route: string;
 }
+
 
 export const APP_CONSTANTS = {
   NAV_ITEMS: [
