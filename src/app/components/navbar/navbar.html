@@ -3,7 +3,7 @@
     <div class="text-xl font-bold text-gray-800">ERP Dashboard</div>
 
     <ul class="flex space-x-6 text-gray-700 font-medium">
-      <li>
+      <li *ngIf="!auth.isLoggedIn()">
         <a
           routerLink="/home"
           routerLinkActive="text-blue-500"
