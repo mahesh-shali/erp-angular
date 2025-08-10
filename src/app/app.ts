@@ -38,6 +38,14 @@ export class App {
     private http: HttpClient
   ) {}
 
+  showSubnav(): boolean {
+    return (
+      this.authService.isLoggedIn() &&
+      !!this.selectedSection &&
+      this.selectedSection.toLowerCase() !== 'dashboard'
+    );
+  }
+
   handleSection(section: string) {
     this.activeSection = section;
     this.selectedSection = section;

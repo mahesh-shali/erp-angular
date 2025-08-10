@@ -20,14 +20,17 @@ export class Sidenavbar implements OnInit {
   selectedSection: string = '';
 
   @Output() sectionSelected = new EventEmitter<string>();
-  router: any;
 
   constructor(
     private http: HttpClient,
     private auth: AuthService,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private router: Router
   ) {}
 
+  isLoginPage(): boolean {
+    return this.router.url === '/login';
+  }
   ngOnInit(): void {
     // const roleId = localStorage.getItem('roleId');
     // if (!roleId) {
@@ -115,7 +118,7 @@ export class Sidenavbar implements OnInit {
     this.selectedSection = section;
     this.sectionSelected.emit(section);
     if (section.toLowerCase() === 'dashboard') {
-      this.router.navigate(['s/dashboard']); //change to your dashboard route
+      this.router.navigate(['s/dashboard']);
       return;
     }
     this.menuService.setSelectedSection(section);
