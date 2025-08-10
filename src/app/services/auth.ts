@@ -23,12 +23,30 @@ export class AuthService {
   private _roleId = new BehaviorSubject<number | null>(null);
   roleId$ = this._roleId.asObservable();
 
+  private loginState = new BehaviorSubject<number | null>(
+    this.getStoredRoleId()
+  );
+  loginState$ = this.loginState.asObservable();
+
   constructor(private http: HttpClient) {
     // Initialize roleId from localStorage on service creation
     const storedRoleId = localStorage.getItem('roleId');
     if (storedRoleId) {
       this._roleId.next(+storedRoleId);
     }
+  }
+
+  private getStoredRoleId(): number | null {
+    const roleId = localStorage.getItem('roleId');
+    return roleId ? parseInt(roleId, 10) : null;
+  }
+
+  register(dto: {
+    name: string;
+    email: string;
+    password: string;
+  }): Observable<any> {
+    return this.http.post('http://localhost:5133/api/auth/register', dto);
   }
 
   login(dto: LoginPayload): Observable<LoginResponse> {
@@ -42,6 +60,12 @@ export class AuthService {
         this._roleId.next(response.roleId);
       })
     );
+  }
+
+  setLoginState(token: string, roleId: number) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('roleId', roleId.toString());
+    this.loginState.next(roleId);
   }
 
   isLoggedIn(): boolean {
@@ -60,6 +84,8 @@ export class AuthService {
     localStorage.removeItem('mainPermissions');
     localStorage.removeItem('mainPermissions:timestamp');
     this._roleId.next(null);
+    localStorage.clear();
+    this.loginState.next(null);
   }
 }
 

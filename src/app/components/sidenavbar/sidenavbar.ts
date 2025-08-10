@@ -1,9 +1,12 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { SidebarItem } from '../../constants/constants';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClient } from '@angular/common/http';
+
+import { AuthService } from '../../services/auth';
+import { MenuService } from '../../services/menu.service';
 
 @Component({
   selector: 'app-sidenavbar',
@@ -17,16 +20,66 @@ export class Sidenavbar implements OnInit {
   selectedSection: string = '';
 
   @Output() sectionSelected = new EventEmitter<string>();
+  router: any;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private auth: AuthService,
+    private menuService: MenuService
+  ) {}
 
   ngOnInit(): void {
-    const roleId = localStorage.getItem('roleId');
-    if (!roleId) {
-      console.error('Missing roleId in localStorage');
-      return;
-    }
+    // const roleId = localStorage.getItem('roleId');
+    // if (!roleId) {
+    //   console.error('Missing roleId in localStorage');
+    //   return;
+    this.auth.loginState$.subscribe((roleId) => {
+      if (roleId) {
+        this.loadMenu(roleId);
+      } else {
+        this.navItems = [];
+      }
+    });
+  }
 
+  //   const cache = localStorage.getItem('mainPermissions');
+  //   const timestamp = localStorage.getItem('mainPermissions:timestamp');
+  //   const FIVE_SECONDS = 5 * 1000;
+  //   const now = Date.now();
+
+  //   if (cache && timestamp && now - parseInt(timestamp) < FIVE_SECONDS) {
+  //     this.navItems = JSON.parse(cache).filter(
+  //       (item: SidebarItem) => item.isvisible
+  //     );
+  //   } else {
+  //     this.http
+  //       .get<any>(`http://localhost:5133/api/auth/permissions/${roleId}`)
+  //       .subscribe({
+  //         next: (data) => {
+  //           const mainPermissions = data.mainPermissions || [];
+
+  //           // Cache main permissions with timestamp
+  //           localStorage.setItem(
+  //             'mainPermissions',
+  //             JSON.stringify(mainPermissions)
+  //           );
+  //           localStorage.setItem('mainPermissions:timestamp', now.toString());
+
+  //           this.navItems = mainPermissions.filter(
+  //             (item: SidebarItem) => item.isvisible
+  //           );
+  //         },
+  //         error: (err) => console.error('Error loading nav items', err),
+  //       });
+  //   }
+  // }
+
+  // selectSection(section: string) {
+  //   this.selectedSection = section;
+  //   this.sectionSelected.emit(section);
+  // }
+
+  private loadMenu(roleId: number) {
     const cache = localStorage.getItem('mainPermissions');
     const timestamp = localStorage.getItem('mainPermissions:timestamp');
     const FIVE_SECONDS = 5 * 1000;
@@ -43,7 +96,6 @@ export class Sidenavbar implements OnInit {
           next: (data) => {
             const mainPermissions = data.mainPermissions || [];
 
-            // Cache main permissions with timestamp
             localStorage.setItem(
               'mainPermissions',
               JSON.stringify(mainPermissions)
@@ -62,5 +114,10 @@ export class Sidenavbar implements OnInit {
   selectSection(section: string) {
     this.selectedSection = section;
     this.sectionSelected.emit(section);
+    if (section.toLowerCase() === 'dashboard') {
+      this.router.navigate(['s/dashboard']); //change to your dashboard route
+      return;
+    }
+    this.menuService.setSelectedSection(section);
   }
 }

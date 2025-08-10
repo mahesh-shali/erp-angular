@@ -18,6 +18,8 @@ import { Router } from '@angular/router';
 })
 export class Login implements OnInit {
   loginForm: FormGroup;
+  registerForm: FormGroup;
+  isLoginMode = true;
   isLoading = true;
 
   constructor(
@@ -29,11 +31,41 @@ export class Login implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
     });
+
+    this.registerForm = this.fb.group({
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
+    });
   }
+
+  toggleAuthMode() {
+    this.isLoginMode = !this.isLoginMode;
+  }
+
   ngOnInit(): void {
     setTimeout(() => {
       this.isLoading = false;
     }, 200);
+  }
+
+  onRegister() {
+    if (this.registerForm.valid) {
+      const { name, email, password } = this.registerForm.value;
+      const dto = { name, email, password };
+      this.auth.register(dto).subscribe({
+        next: (res) => {
+          alert('Registered successfully, please login!');
+          this.toggleAuthMode(); // Switch to login view
+        },
+        error: (err) => {
+          console.error('Register failed:', err);
+          alert('Registration failed. Try again.');
+        },
+      });
+    } else {
+      console.warn('Register form invalid');
+    }
   }
 
   onSubmit() {
@@ -44,8 +76,10 @@ export class Login implements OnInit {
         next: (response: { token: string; roleId: number }) => {
           console.log('Login success:', response);
 
-          localStorage.setItem('token', response.token);
-          localStorage.setItem('roleId', response.roleId.toString());
+          // localStorage.setItem('token', response.token);
+          // localStorage.setItem('roleId', response.roleId.toString());
+
+          this.auth.setLoginState(response.token, response.roleId);
 
           // Route based on role
           switch (response.roleId) {

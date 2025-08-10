@@ -6,6 +6,7 @@ import { Dashboard } from './pages/superAdmin/dashboard/dashboard';
 import { AuthGuard } from './auth-guard';
 import { Users } from './components/SuperAdmin/Masters/users/users';
 import { Overview } from './pages/superAdmin/overview/overview';
+import { Item } from './pages/superAdmin/item/item';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -27,6 +28,12 @@ export const routes: Routes = [
   {
     path: 's/overview',
     component: Overview,
+    canActivate: [AuthGuard],
+    data: { roles: [1] },
+  },
+  {
+    path: 's/item',
+    component: Item,
     canActivate: [AuthGuard],
     data: { roles: [1] },
   },
