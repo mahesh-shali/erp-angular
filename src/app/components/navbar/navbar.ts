@@ -15,15 +15,16 @@ export class Navbar implements OnInit {
   currentUrl: string = '';
   constructor(public auth: AuthService, private router: Router) {}
   ngOnInit(): void {
-    // Update currentUrl on every navigation end
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         this.currentUrl = event.url;
       });
-
-    // initialize currentUrl immediately
     this.currentUrl = this.router.url;
+  }
+
+  isLoginPage(): boolean {
+    return this.router.url === '/login';
   }
 
   logout() {
@@ -38,8 +39,5 @@ export class Navbar implements OnInit {
     this.router.navigate(['/login']).then(() => {
       window.location.reload();
     });
-  }
-  isLoginPage(): boolean {
-    return this.router.url === '/login';
   }
 }

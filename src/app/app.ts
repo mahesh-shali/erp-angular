@@ -37,6 +37,7 @@ export class App {
     private sectionService: SectionService,
     private http: HttpClient
   ) {}
+
   handleSection(section: string) {
     this.activeSection = section;
     this.selectedSection = section;
