@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MenuService } from '../../services/menu.service';
+import { AuthService } from '../../services/auth';
 
 interface SubPermission {
   label: string;
@@ -26,7 +27,16 @@ export class Subsidenavbar implements OnInit {
 
   sectionOptions: { [key: string]: SubPermission[] } = {};
 
-  constructor(private http: HttpClient, private menuService: MenuService) {}
+  constructor(
+    private http: HttpClient,
+    private menuService: MenuService,
+    private auth: AuthService,
+    private router: Router
+  ) {}
+
+  isLoginPage(): boolean {
+    return this.router.url === '/login';
+  }
 
   ngOnInit(): void {
     // const cached = localStorage.getItem('subPermissions');
@@ -90,6 +100,7 @@ export class Subsidenavbar implements OnInit {
   //   });
   //   return grouped;
   // }
+
   private loadSubMenu(section: string) {
     const roleId = localStorage.getItem('roleId');
     if (!roleId) {

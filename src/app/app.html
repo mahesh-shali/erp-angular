@@ -5,7 +5,10 @@
     *ngIf="authService.isLoggedIn()"
     (sectionSelected)="handleSection($event)"
   ></app-sidenavbar>
-  <app-subsidenavbar [section]="selectedSection"></app-subsidenavbar>
+  <app-subsidenavbar
+    *ngIf="showSubnav()"
+    [section]="selectedSection"
+  ></app-subsidenavbar>
   <!-- <app-home [section]="selectedSection"></app-home> -->
   <router-outlet></router-outlet>
 </main>
