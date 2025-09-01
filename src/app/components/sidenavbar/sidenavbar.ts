@@ -7,6 +7,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { AuthService } from '../../services/auth';
 import { MenuService } from '../../services/menu.service';
+import { UiService } from '../../services/ui.service';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'app-sidenavbar',
@@ -17,7 +19,8 @@ import { MenuService } from '../../services/menu.service';
 })
 export class Sidenavbar implements OnInit {
   navItems: SidebarItem[] = [];
-  selectedSection: string = '';
+  selectedSection: string | null = null;
+  private sub!: Subscription;
 
   @Output() sectionSelected = new EventEmitter<string>();
 
@@ -25,8 +28,17 @@ export class Sidenavbar implements OnInit {
     private http: HttpClient,
     private auth: AuthService,
     private menuService: MenuService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private uiService: UiService
+  ) {
+    this.sub = this.uiService.closeSubsidenav$.subscribe(() => {
+      this.selectedSection = null; // collapse subsidenav
+    });
+  }
+
+  // selectSection(section: string) {
+  //   this.selectedSection = section;
+  // }
 
   isLoginPage(): boolean {
     return this.router.url === '/login';
@@ -121,6 +133,16 @@ export class Sidenavbar implements OnInit {
       this.router.navigate(['s/dashboard']);
       return;
     }
+    if (section.toLowerCase() === 'ai') {
+      this.menuService.setSelectedSection(''); // ✅ close submenu
+      this.router.navigate(['s/ai']);
+      return;
+    }
     this.menuService.setSelectedSection(section);
+    this.selectedSection = section;
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 }
