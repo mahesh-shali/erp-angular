@@ -18,6 +18,17 @@
       </li>
       <li>
         <a
+          routerLink="s/ai"
+          routerLinkActive="text-blue-500"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="cursor-pointer"
+          (click)="onAiClick()"
+        >
+          AI
+        </a>
+      </li>
+      <li>
+        <a
           routerLink="/about"
           routerLinkActive="text-blue-500"
           [routerLinkActiveOptions]="{ exact: true }"

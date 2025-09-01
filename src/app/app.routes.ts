@@ -7,6 +7,7 @@ import { AuthGuard } from './auth-guard';
 import { Users } from './components/SuperAdmin/Masters/users/users';
 import { Overview } from './pages/superAdmin/overview/overview';
 import { Item } from './pages/superAdmin/item/item';
+import { Index } from './pages/ai/index';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -34,6 +35,12 @@ export const routes: Routes = [
   {
     path: 's/item',
     component: Item,
+    canActivate: [AuthGuard],
+    data: { roles: [1] },
+  },
+  {
+    path: 's/ai',
+    component: Index,
     canActivate: [AuthGuard],
     data: { roles: [1] },
   },
