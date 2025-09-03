@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-index',
@@ -17,6 +18,7 @@ export class Index implements OnInit {
 
   @Output() send = new EventEmitter<string>();
   section: string | null = null;
+  private aiUrl = environment.aiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -37,9 +39,7 @@ export class Index implements OnInit {
     this.message = '';
 
     this.http
-      .get<any>(
-        `http://127.0.0.1:8000/ai/ask?q=${encodeURIComponent(userMessage)}`
-      )
+      .get<any>(`${this.aiUrl}/ai/ask?q=${encodeURIComponent(userMessage)}`)
       .subscribe({
         next: (res) => {
           this.messages.push({ sender: 'ai', text: res.response });

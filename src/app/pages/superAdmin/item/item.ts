@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SectionService } from '../../../services/auth';
+import { environment } from 'src/environments/environment';
 
 export interface Item {
   id: number;
@@ -23,12 +24,13 @@ export class Item implements OnInit {
   filteredItems: Item[] = [];
   inputValue = '';
   dropdownVisible = false;
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     this.sectionService.section$.subscribe((s) => (this.section = s));
-    this.http.get<Item[]>('http://localhost:5133/api/item/getItems').subscribe({
+    this.http.get<Item[]>(`${this.apiUrl}/api/item/getItems`).subscribe({
       next: (data) => {
         this.items = data;
         this.filteredItems = data;
