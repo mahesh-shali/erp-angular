@@ -46,8 +46,8 @@ Thumbs.db
 
 
 # Environment files
-.env
-src/environments/environment.ts
-src/environments/environment.prod.ts
-src/environments/environment.dev.ts
-src/environments/environment.staging.ts
+# .env
+# src/environments/environment.ts
+# src/environments/environment.prod.ts
+# src/environments/environment.dev.ts
+# src/environments/environment.staging.ts
