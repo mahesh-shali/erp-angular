@@ -9,6 +9,7 @@ import { AuthService } from '../../services/auth';
 import { MenuService } from '../../services/menu.service';
 import { UiService } from '../../services/ui.service';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-sidenavbar',
@@ -23,6 +24,8 @@ export class Sidenavbar implements OnInit {
   private sub!: Subscription;
 
   @Output() sectionSelected = new EventEmitter<string>();
+
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,
@@ -106,7 +109,7 @@ export class Sidenavbar implements OnInit {
       );
     } else {
       this.http
-        .get<any>(`http://localhost:5133/api/auth/permissions/${roleId}`)
+        .get<any>(`${this.apiUrl}/api/auth/permissions/${roleId}`)
         .subscribe({
           next: (data) => {
             const mainPermissions = data.mainPermissions || [];

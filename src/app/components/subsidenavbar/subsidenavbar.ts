@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { MenuService } from '../../services/menu.service';
 import { AuthService } from '../../services/auth';
+import { environment } from '../../../environments/environment';
 
 interface SubPermission {
   label: string;
@@ -27,13 +28,15 @@ export class Subsidenavbar implements OnInit {
 
   sectionOptions: { [key: string]: SubPermission[] } = {};
 
+  private apiUrl = environment.apiUrl;
+
   constructor(
     private http: HttpClient,
     private menuService: MenuService,
     private auth: AuthService,
     private router: Router
   ) {}
- 
+
   isLoginPage(): boolean {
     return this.router.url === '/login';
   }
@@ -110,7 +113,7 @@ export class Subsidenavbar implements OnInit {
     console.log('Loading submenu for roleId:', roleId, 'section:', section);
 
     this.http
-      .get<any>(`http://localhost:5133/api/auth/permissions/${roleId}`)
+      .get<any>(`${this.apiUrl}/api/auth/permissions/${roleId}`)
       .subscribe({
         next: (data) => {
           console.log('Submenu API response:', data);
