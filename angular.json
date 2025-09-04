@@ -27,7 +27,12 @@
                 "input": "public"
               },
               "src/favicon.ico",
-              "src/static"
+              "src/static",
+              {
+                "glob": "_redirects",
+                "input": "src",
+                "output": "."
+              }
             ],
             "styles": [
               "@angular/material/prebuilt-themes/rose-red.css",
