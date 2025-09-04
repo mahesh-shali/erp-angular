@@ -124,8 +124,8 @@ export interface LoginResponse {
 })
 export class AuthService {
   private apiUrl = environment.apiUrl;
-  private loginUrl = `${this.apiUrl}/api/auth/login`;
-  private registerUrl = `${this.apiUrl}/api/auth/register`;
+  private loginUrl = `${this.apiUrl}/auth/login`;
+  private registerUrl = `${this.apiUrl}/auth/register`;
 
   private _roleId = new BehaviorSubject<number | null>(this.getStoredRoleId());
   roleId$ = this._roleId.asObservable();
