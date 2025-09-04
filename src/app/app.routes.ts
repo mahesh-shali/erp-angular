@@ -7,7 +7,8 @@ import { AuthGuard } from './auth-guard';
 import { Users } from './components/SuperAdmin/Masters/users/users';
 import { Overview } from './pages/superAdmin/overview/overview';
 import { Item } from './pages/superAdmin/item/item';
-import { Index } from './pages/ai/index';
+// Update the import path and exported symbol if necessary
+import { Index } from './pages/ai/index/index';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
