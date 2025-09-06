@@ -4,15 +4,16 @@
   "type": "module",
   "scripts": {
     "ng": "ng",
-    "start": "npm run serve:ssr",
+    "start": "npm run build:ssr && npm run serve:ssr",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "build:server": "ng run client:server",
-    "build:ssr": "npm run build && npm run build:server",
-    "serve:ssr": "node dist/client/server/main.js",
+    "build:ssr": "npm run build && npm run build:server && npm run rename:server",
+    "rename:server": "node -e \"const fs=require('fs');fs.renameSync('dist/client/server/main.js','dist/client/server/main.cjs')\"",
+    "serve:ssr": "node dist/client/server/main.cjs",
     "prerender": "ng run client:prerender",
-    "serve:ssr:client": "node dist/client/server/server.js"
+    "serve:ssr:client": "node dist/client/server/server.mjs"
   },
   "private": true,
   "dependencies": {
