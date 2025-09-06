@@ -105,6 +105,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { StorageService } from './StorageService';
 
 export interface LoginPayload {
   email: string;
@@ -135,16 +136,16 @@ export class AuthService {
   );
   loginState$ = this.loginState.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private storage: StorageService) {
     // Initialize roleId from localStorage on service creation
-    const storedRoleId = localStorage.getItem('roleId');
+    const storedRoleId = this.storage.get('roleId');
     if (storedRoleId) {
       this._roleId.next(+storedRoleId);
     }
   }
 
   private getStoredRoleId(): number | null {
-    const roleId = localStorage.getItem('roleId');
+    const roleId = this.storage.get('roleId');
     return roleId ? parseInt(roleId, 10) : null;
   }
 
@@ -177,7 +178,7 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    return !!this.storage.get('token');
   }
 
   getRoleId(): number | null {
