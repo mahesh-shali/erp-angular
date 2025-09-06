@@ -5,7 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { MenuService } from '../../services/menu.service';
 import { AuthService } from '../../services/auth';
-import { environment } from '../../../environments/environment';
+// import { environment } from '../../../environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 interface SubPermission {
   label: string;
