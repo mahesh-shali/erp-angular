@@ -11,7 +11,6 @@
     "build:server": "ng run client:server",
     "build:ssr": "npm run build && npm run build:server && npm run rename:server",
     "rename:server": "node -e \"const fs=require('fs');fs.renameSync('dist/client/server/main.js','dist/client/server/main.cjs')\"",
-    "postbuild:server": "copy /Y \"dist\\client\\server\\main.js\" \"dist\\client\\server\\main.cjs\"",
     "serve:ssr": "node dist/client/server/main.cjs",
     "prerender": "ng run client:prerender",
     "serve:ssr:client": "node dist/client/server/server.mjs"
