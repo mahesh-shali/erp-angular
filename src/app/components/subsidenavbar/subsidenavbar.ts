@@ -113,14 +113,12 @@ export class Subsidenavbar implements OnInit {
     }
     console.log('Loading submenu for roleId:', roleId, 'section:', section);
 
-    this.http
-      .get<any>(`${this.apiUrl}/api/auth/permissions/${roleId}`)
-      .subscribe({
-        next: (data) => {
-          console.log('Submenu API response:', data);
-          this.optionsForCurrentSection = data.subPermissions || [];
-        },
-        error: (err) => console.error('Error loading sub nav items', err),
-      });
+    this.http.get<any>(`${this.apiUrl}/auth/permissions/${roleId}`).subscribe({
+      next: (data) => {
+        console.log('Submenu API response:', data);
+        this.optionsForCurrentSection = data.subPermissions || [];
+      },
+      error: (err) => console.error('Error loading sub nav items', err),
+    });
   }
 }
