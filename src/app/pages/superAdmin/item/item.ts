@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SectionService } from '../../../services/auth';
-import { environment } from 'src/environments/environment';
+// import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 export interface Item {
   id: number;
