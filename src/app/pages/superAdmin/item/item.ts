@@ -31,7 +31,7 @@ export class Item implements OnInit {
 
   ngOnInit(): void {
     this.sectionService.section$.subscribe((s) => (this.section = s));
-    this.http.get<Item[]>(`${this.apiUrl}/api/item/getItems`).subscribe({
+    this.http.get<Item[]>(`${this.apiUrl}/item/getItems`).subscribe({
       next: (data) => {
         this.items = data;
         this.filteredItems = data;

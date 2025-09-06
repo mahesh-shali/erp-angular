@@ -110,7 +110,7 @@ export class Sidenavbar implements OnInit {
       );
     } else {
       this.http
-        .get<any>(`${this.apiUrl}/api/auth/permissions/${roleId}`)
+        .get<any>(`${this.apiUrl}/auth/permissions/${roleId}`)
         .subscribe({
           next: (data) => {
             const mainPermissions = data.mainPermissions || [];
