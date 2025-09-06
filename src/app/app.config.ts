@@ -18,6 +18,6 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     SectionService, // Ensure SectionService is provided
-    FormsModule, provideClientHydration(withEventReplay()), // Import FormsModule for template-driven forms
+    FormsModule, provideClientHydration(withEventReplay()), provideClientHydration(withEventReplay()), // Import FormsModule for template-driven forms
   ],
 };

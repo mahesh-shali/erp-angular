@@ -31,7 +31,7 @@
     "sourceMap": true,
     "downlevelIteration": true,
     "strictPropertyInitialization": false,
-    "emitDecoratorMetadata": true,
+    "emitDecoratorMetadata": false,
     "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
