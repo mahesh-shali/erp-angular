@@ -9,7 +9,8 @@ import { AuthService } from '../../services/auth';
 import { MenuService } from '../../services/menu.service';
 import { UiService } from '../../services/ui.service';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { environment } from '../../../environments/environment';
+// import { environment } from '../../../environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-sidenavbar',
