@@ -59,7 +59,6 @@ export const routes: Routes = [
   { path: '404', component: NotFound },
 
   // { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login' },
 
   {
     path: '',
@@ -68,4 +67,5 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   { path: '**', component: NotFound, canActivate: [LoggedInRedirectGuard] },
+  { path: '**', redirectTo: '/login' },
 ];
