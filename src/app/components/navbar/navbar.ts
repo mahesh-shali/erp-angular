@@ -38,36 +38,16 @@ export class Navbar implements OnInit {
     this.uiService.triggerCloseSubsidenav();
   }
 
-  // onNavClick(section: string) {
-  //   this.selectedSection = section;
-
-  //   if (section.toLowerCase() === 'ai') {
-  //     this.closeSubSidebar(); // ✅ clear submenu when AI clicked
-  //     this.router.navigate(['s/ai']);
-  //   } else if (section.toLowerCase() === 'home') {
-  //     this.closeSubSidebar(); // ✅ Home also closes submenu
-  //     this.router.navigate(['/home']);
-  //   } else {
-  //     this.menuService.setSelectedSection(section); // normal case
-  //   }
-  // }
-
-  // closeSubSidebar() {
-  //   this.menuService.setSelectedSection('');
-  // }
-
   isLoginPage(): boolean {
     return this.router.url === '/login';
   }
 
+  isHomePage(): boolean {
+    return this.router.url === '/home';
+  }
+
   logout() {
     this.auth.logout();
-    // localStorage.removeItem('token');
-    // localStorage.removeItem('roleId');
-    // localStorage.removeItem('subPermissions');
-    // localStorage.removeItem('subPermissions:timestamp');
-    // localStorage.removeItem('mainPermissions');
-    // localStorage.removeItem('mainPermissions:timestamp');
     const keysToRemove = [
       'token',
       'roleId',

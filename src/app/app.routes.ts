@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-// Make sure the correct path and export are used for LoginComponent
 import { Login } from './pages/login/login';
 import { Home } from './pages/home/home';
 import { Dashboard } from './pages/superAdmin/dashboard/dashboard';
@@ -7,8 +6,9 @@ import { AuthGuard } from './auth-guard';
 import { Users } from './components/SuperAdmin/Masters/users/users';
 import { Overview } from './pages/superAdmin/overview/overview';
 import { Item } from './pages/superAdmin/item/item';
-// Update the import path and exported symbol if necessary
 import { Index } from './pages/ai/index/index';
+import { NotFound } from './pages/not-found/not-found';
+import { LoggedInRedirectGuard } from './services/logged-in-redirect.guard';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -56,6 +56,16 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
 
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login' },
+  { path: '404', component: NotFound },
+
+  // { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '**', redirectTo: '/404' },
+
+  {
+    path: '',
+    component: NotFound,
+    canActivate: [LoggedInRedirectGuard],
+    pathMatch: 'full',
+  },
+  { path: '**', component: NotFound, canActivate: [LoggedInRedirectGuard] },
 ];

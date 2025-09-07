@@ -5,8 +5,12 @@
   "scripts": {
     "ng": "ng",
     "start": "npm run build:ssr && npm run serve:ssr",
+    "dev:start": "ng run client:dev-serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "build:server:dev": "ng run client:server:development",
+    "serve:ssr:dev": "node dist/client/server/main.js",
+    "dev:ssr": "ng build && ng run client:server & nodemon --watch dist/client/browser --exec \"node dist/client/browser/main.js\"",
     "test": "ng test",
     "build:server": "ng run client:server",
     "build:ssr": "npm run build && npm run build:server && npm run rename:server",

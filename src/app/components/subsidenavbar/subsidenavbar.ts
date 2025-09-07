@@ -1,11 +1,81 @@
+// import { CommonModule } from '@angular/common';
+// import { HttpClient } from '@angular/common/http';
+// import { Component, Input, OnInit } from '@angular/core';
+// import { MatIconModule } from '@angular/material/icon';
+// import { Router, RouterModule } from '@angular/router';
+// import { MenuService } from '../../services/menu.service';
+// import { AuthService } from '../../services/auth';
+// import { environment } from 'src/environments/environment.prod';
+
+// interface SubPermission {
+//   label: string;
+//   option: string;
+//   route: string;
+//   isvisible: boolean;
+//   icon?: string;
+// }
+
+// @Component({
+//   selector: 'app-subsidenavbar',
+//   standalone: true,
+//   imports: [CommonModule, RouterModule, MatIconModule],
+//   templateUrl: './subsidenavbar.html',
+//   styleUrls: ['./subsidenavbar.scss'],
+// })
+// export class Subsidenavbar implements OnInit {
+//   @Input() section = '';
+//   optionsForCurrentSection: any[] = [];
+
+//   sectionOptions: { [key: string]: SubPermission[] } = {};
+
+//   private apiUrl = environment.apiUrl;
+
+//   constructor(
+//     private http: HttpClient,
+//     private menuService: MenuService,
+//     private auth: AuthService,
+//     private router: Router
+//   ) {}
+
+//   isLoginPage(): boolean {
+//     return this.router.url === '/login';
+//   }
+
+//   ngOnInit(): void {
+//     this.menuService.selectedSection$.subscribe((section) => {
+//       if (section) {
+//         this.loadSubMenu(section);
+//       } else {
+//         this.optionsForCurrentSection = [];
+//       }
+//     });
+//   }
+
+//   private loadSubMenu(section: string) {
+//     const roleId = localStorage.getItem('roleId');
+//     if (!roleId) {
+//       console.error('Missing roleId for submenu load');
+//       return;
+//     }
+//     console.log('Loading submenu for roleId:', roleId, 'section:', section);
+
+//     this.http.get<any>(`${this.apiUrl}/auth/permissions/${roleId}`).subscribe({
+//       next: (data) => {
+//         console.log('Submenu API response:', data);
+//         this.optionsForCurrentSection = data.subPermissions || [];
+//       },
+//       error: (err) => console.error('Error loading sub nav items', err),
+//     });
+//   }
+// }
+
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { MenuService } from '../../services/menu.service';
 import { AuthService } from '../../services/auth';
-// import { environment } from '../../../environments/environment';
 import { environment } from 'src/environments/environment.prod';
 
 interface SubPermission {
@@ -14,6 +84,11 @@ interface SubPermission {
   route: string;
   isvisible: boolean;
   icon?: string;
+}
+
+interface PermissionsResponse {
+  mainPermissions: any[];
+  subPermissions: SubPermission[];
 }
 
 @Component({
@@ -25,7 +100,7 @@ interface SubPermission {
 })
 export class Subsidenavbar implements OnInit {
   @Input() section = '';
-  optionsForCurrentSection: any[] = [];
+  optionsForCurrentSection: SubPermission[] = [];
 
   sectionOptions: { [key: string]: SubPermission[] } = {};
 
@@ -43,13 +118,6 @@ export class Subsidenavbar implements OnInit {
   }
 
   ngOnInit(): void {
-    // const cached = localStorage.getItem('subPermissions');
-    // const timestamp = localStorage.getItem('subPermissions:timestamp');
-    // const roleId = localStorage.getItem('roleId');
-
-    // if (!roleId) {
-    //   console.error('Missing roleId in localStorage');
-    //   return;
     this.menuService.selectedSection$.subscribe((section) => {
       if (section) {
         this.loadSubMenu(section);
@@ -59,66 +127,43 @@ export class Subsidenavbar implements OnInit {
     });
   }
 
-  //   const FIVE_SECONDS = 5 * 1000;
-  //   const now = Date.now();
-
-  //   if (cached && timestamp && now - parseInt(timestamp) < FIVE_SECONDS) {
-  //     const parsed = JSON.parse(cached);
-  //     this.sectionOptions = this.groupSubPermissions(parsed);
-  //   } else {
-  //     this.http
-  //       .get<any>(`http://localhost:5133/api/auth/permissions/${roleId}`)
-  //       .subscribe({
-  //         next: (data) => {
-  //           const subPermissions = data.subPermissions || [];
-
-  //           // Store in localStorage
-  //           localStorage.setItem(
-  //             'subPermissions',
-  //             JSON.stringify(subPermissions)
-  //           );
-  //           localStorage.setItem('subPermissions:timestamp', now.toString());
-
-  //           // Group and assign
-  //           this.sectionOptions = this.groupSubPermissions(subPermissions);
-  //         },
-  //         error: (err) => console.error('Error loading sub-permissions', err),
-  //       });
-  //   }
-  // }
-
-  // get optionsForCurrentSection(): SubPermission[] {
-  //   return this.sectionOptions[this.section] || [];
-  // }
-
-  // private groupSubPermissions(subPermissions: SubPermission[]): {
-  //   [key: string]: SubPermission[];
-  // } {
-  //   const grouped: { [key: string]: SubPermission[] } = {};
-  //   subPermissions.forEach((perm) => {
-  //     if (perm.isvisible) {
-  //       const key = perm.label?.trim();
-  //       if (!grouped[key]) grouped[key] = [];
-  //       grouped[key].push(perm);
-  //     }
-  //   });
-  //   return grouped;
-  // }
-
   private loadSubMenu(section: string) {
     const roleId = localStorage.getItem('roleId');
+    const token = localStorage.getItem('token');
+
     if (!roleId) {
       console.error('Missing roleId for submenu load');
       return;
     }
-    console.log('Loading submenu for roleId:', roleId, 'section:', section);
 
-    this.http.get<any>(`${this.apiUrl}/auth/permissions/${roleId}`).subscribe({
-      next: (data) => {
-        console.log('Submenu API response:', data);
-        this.optionsForCurrentSection = data.subPermissions || [];
-      },
-      error: (err) => console.error('Error loading sub nav items', err),
+    if (!token) {
+      console.warn('Unauthorized: missing token');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
     });
+
+    this.http
+      .get<PermissionsResponse>(`${this.apiUrl}/auth/permissions/${roleId}`, {
+        headers,
+      })
+      .subscribe({
+        next: (data) => {
+          this.optionsForCurrentSection = data.subPermissions.filter(
+            (p) => p.isvisible
+          );
+        },
+        error: (err) => {
+          console.error('Error loading sub nav items', err);
+          if (err.status === 401) {
+            console.warn('Unauthorized! Redirecting to login...');
+            this.auth.logout(); // optionally clear auth state
+            this.router.navigate(['/login']);
+          }
+        },
+      });
   }
 }
