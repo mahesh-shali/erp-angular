@@ -44,6 +44,21 @@
             "development": { "browserTarget": "client:build:development" }
           }
         },
+        "dev-serve": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "buildTarget": "client:build:development"
+          },
+          "configurations": {
+            "development": {
+              "buildTarget": "client:build:development"
+            },
+            "production": {
+              "buildTarget": "client:build:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
         "server": {
           "builder": "@angular-devkit/build-angular:server",
           "options": {
@@ -64,6 +79,12 @@
           "options": {
             "browserTarget": "client:build",
             "serverTarget": "client:server"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "client:build:production",
+              "serverTarget": "client:server:production"
+            }
           }
         },
         "prerender": {

@@ -13,7 +13,7 @@ import { AuthService } from './services/auth';
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
-  canActivate(route: ActivatedRouteSnapshot): boolean {
+  canActivate(route: ActivatedRouteSnapshot): boolean | UrlTree {
     if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
       return false;
@@ -23,8 +23,12 @@ export class AuthGuard implements CanActivate {
     const userRoleId = this.authService.getRoleId();
 
     if (allowedRoles && !allowedRoles.includes(userRoleId!)) {
-      this.router.navigate(['/home']); // or access denied page
+      this.router.navigate(['/home']);
       return false;
+    }
+
+    if (!route.routeConfig) {
+      return this.router.parseUrl('/404');
     }
 
     return true;

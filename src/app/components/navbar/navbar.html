@@ -16,6 +16,28 @@
           Home
         </a>
       </li>
+      <li *ngIf="isHomePage()" [ngSwitch]="auth.getRoleId()">
+        <ng-container *ngSwitchCase="1">
+          <a
+            routerLink="s/dashboard"
+            routerLinkActive="text-blue-500"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="cursor-pointer"
+          >
+            Dashboard
+          </a>
+        </ng-container>
+        <ng-container *ngSwitchCase="2">
+          <a
+            routerLink="a/dashboard"
+            routerLinkActive="text-blue-500"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="cursor-pointer"
+          >
+            Dashboard
+          </a>
+        </ng-container>
+      </li>
       <li>
         <a
           routerLink="s/ai"

@@ -1,4 +1,4 @@
-<app-navbar></app-navbar>
+<!-- <app-navbar></app-navbar>
 
 <main class="pt-16 min-h-screen bg-gray-100 flex flex-col">
   <app-sidenavbar
@@ -9,6 +9,50 @@
     *ngIf="showSubnav()"
     [section]="selectedSection"
   ></app-subsidenavbar>
-  <!-- <app-home [section]="selectedSection"></app-home> -->
+  <-- <app-home [section]="selectedSection"></app-home> --
   <router-outlet></router-outlet>
-</main>
+</main> -->
+
+<!-- <ng-container *ngIf="!isNotFoundPage()">
+  <app-navbar></app-navbar>
+
+  <main class="pt-16 min-h-screen bg-gray-100 flex flex-col">
+    <app-sidenavbar
+      *ngIf="authService.isLoggedIn()"
+      (sectionSelected)="handleSection($event)"
+    ></app-sidenavbar>
+
+    <app-subsidenavbar
+      *ngIf="showSubnav()"
+      [section]="selectedSection"
+    ></app-subsidenavbar>
+
+    <router-outlet></router-outlet>
+  </main>
+</ng-container>
+
+<ng-container *ngIf="isNotFoundPage()">
+  <router-outlet></router-outlet>
+</ng-container> -->
+
+<ng-container *ngIf="!isNotFoundPage()">
+  <app-navbar></app-navbar>
+
+  <main class="pt-16 min-h-screen bg-gray-100 flex flex-col">
+    <app-sidenavbar
+      *ngIf="authService.isLoggedIn() && !isHomePage()"
+      (sectionSelected)="handleSection($event)"
+    ></app-sidenavbar>
+
+    <app-subsidenavbar
+      *ngIf="showSubnav() && !isHomePage()"
+      [section]="selectedSection"
+    ></app-subsidenavbar>
+
+    <router-outlet></router-outlet>
+  </main>
+</ng-container>
+
+<ng-container *ngIf="isNotFoundPage()">
+  <router-outlet></router-outlet>
+</ng-container>
