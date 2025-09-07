@@ -59,7 +59,7 @@ export const routes: Routes = [
   { path: '404', component: NotFound },
 
   // { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/404' },
+  { path: '**', redirectTo: '/login' },
 
   {
     path: '',
