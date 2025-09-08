@@ -1,5 +1,41 @@
+<!-- Mobile sidebar (toggleable) -->
 <div
-  class="w-38 h-screen bg-gray-800 text-white flex flex-col space-y-2 p-2 top-12 fixed mt-1"
+  class="md:hidden w-38 h-screen bg-gray-800 text-white flex flex-col space-y-2 p-2 top-12 fixed mt-1"
+  *ngIf="!isLoginPage() && (uiService.sidebarOpen$ | async)"
+>
+  <!-- <button class="self-end p-1 text-gray-300 hover:text-white" (click)="uiService.closeSidebar()">✕</button> -->
+  <button
+    *ngFor="let item of navItems"
+    (click)="selectSection(item.section)"
+    [ngClass]="{
+      'bg-gray-700': selectedSection === item.section,
+      'hover:bg-gray-700': true
+    }"
+    class="p-2 rounded flex items-center space-x-2"
+  >
+    <mat-icon>{{ item.icon }}</mat-icon>
+    <span>{{ item.label }}</span>
+  </button>
+
+  <!-- Nested accordion for selected section on mobile -->
+  <div *ngIf="mobileAccordionOpen && optionsForCurrentSection.length" class="ml-4 mt-1 space-y-1">
+    <a
+      *ngFor="let sub of optionsForCurrentSection"
+      [routerLink]="sub.route"
+      routerLinkActive="bg-gray-700"
+      class="block text-sm text-gray-200 hover:text-white py-1 px-2 rounded"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="uiService.closeSidebar()"
+    >
+      <mat-icon *ngIf="sub.icon" class="mr-1 text-xs">{{ sub.icon }}</mat-icon>
+      {{ sub.option }}
+    </a>
+  </div>
+</div>
+
+<!-- Desktop sidebar (always visible) -->
+<div
+  class="hidden md:flex w-38 h-screen bg-gray-800 text-white flex-col space-y-2 p-2 top-12 fixed mt-1"
   *ngIf="!isLoginPage()"
 >
   <button

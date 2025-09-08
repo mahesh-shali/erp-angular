@@ -143,6 +143,15 @@ export class Sidenavbar implements OnInit, OnDestroy {
   navItems: SidebarItem[] = [];
   selectedSection: string | null = null;
   private sub!: Subscription;
+  mobileAccordionOpen = false;
+
+  optionsForCurrentSection: Array<{
+    label?: string;
+    option: string;
+    route: string;
+    isvisible: boolean;
+    icon?: string;
+  }> = [];
 
   @Output() sectionSelected = new EventEmitter<string>();
 
@@ -153,7 +162,7 @@ export class Sidenavbar implements OnInit, OnDestroy {
     private auth: AuthService,
     private menuService: MenuService,
     private router: Router,
-    private uiService: UiService
+    public uiService: UiService
   ) {
     this.sub = this.uiService.closeSubsidenav$.subscribe(() => {
       this.selectedSection = null; // collapse subsidenav
@@ -176,16 +185,15 @@ export class Sidenavbar implements OnInit, OnDestroy {
 
   private loadMenu(roleId: number) {
     const cache = localStorage.getItem('mainPermissions');
-    const timestamp = localStorage.getItem('mainPermissions:timestamp');
     const token = localStorage.getItem('token');
-    const FIVE_SECONDS = 5 * 1000;
-    const now = Date.now();
 
-    if (cache && timestamp && now - parseInt(timestamp) < FIVE_SECONDS) {
-      this.navItems = JSON.parse(cache).filter(
-        (item: SidebarItem) => item.isvisible
-      );
-      return;
+    // Use cache if present; only fetch once per session. Cache is cleared on logout.
+    if (cache) {
+      try {
+        const cached = JSON.parse(cache) as SidebarItem[];
+        this.navItems = cached.filter((item: SidebarItem) => item.isvisible);
+        return;
+      } catch {}
     }
 
     if (!token) {
@@ -205,11 +213,7 @@ export class Sidenavbar implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           const mainPermissions = data.mainPermissions || [];
-          localStorage.setItem(
-            'mainPermissions',
-            JSON.stringify(mainPermissions)
-          );
-          localStorage.setItem('mainPermissions:timestamp', now.toString());
+          localStorage.setItem('mainPermissions', JSON.stringify(mainPermissions));
 
           this.navItems = mainPermissions.filter(
             (item: SidebarItem) => item.isvisible
@@ -227,7 +231,14 @@ export class Sidenavbar implements OnInit, OnDestroy {
   }
 
   selectSection(section: string) {
-    this.selectedSection = section;
+    // Toggle mobile accordion when the same section is clicked; otherwise open and load
+    if (this.selectedSection === section) {
+      this.mobileAccordionOpen = !this.mobileAccordionOpen;
+    } else {
+      this.selectedSection = section;
+      this.mobileAccordionOpen = true;
+    }
+
     this.sectionSelected.emit(section);
 
     switch (section.toLowerCase()) {
@@ -235,16 +246,52 @@ export class Sidenavbar implements OnInit, OnDestroy {
         this.router.navigate(['s/dashboard']);
         break;
       case 'ai':
-        this.menuService.setSelectedSection(''); // close submenu
+        this.menuService.setSelectedSection('');
         this.router.navigate(['s/ai']);
         break;
       default:
         this.menuService.setSelectedSection(section);
+        // Load submenu options for accordion (mobile)
+        this.loadSubMenu(section);
         break;
     }
   }
 
   ngOnDestroy() {
     this.sub.unsubscribe();
+  }
+
+  private loadSubMenu(section: string) {
+    // Prefer cache first
+    const subCache = localStorage.getItem('subPermissions');
+    if (subCache) {
+      try {
+        const list = (JSON.parse(subCache) || []).filter((p: any) => p.isvisible);
+        this.optionsForCurrentSection = list;
+        return;
+      } catch {}
+    }
+
+    const roleId = localStorage.getItem('roleId');
+    const token = localStorage.getItem('token');
+
+    if (!roleId || !token) {
+      this.optionsForCurrentSection = [];
+      return;
+    }
+
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    this.http
+      .get<PermissionsResponse>(`${this.apiUrl}/auth/permissions/${roleId}`, { headers })
+      .subscribe({
+        next: (data) => {
+          const list = (data.subPermissions || []).filter((p: any) => p.isvisible);
+          localStorage.setItem('subPermissions', JSON.stringify(list));
+          this.optionsForCurrentSection = list;
+        },
+        error: () => {
+          this.optionsForCurrentSection = [];
+        },
+      });
   }
 }

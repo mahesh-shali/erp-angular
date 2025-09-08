@@ -101,6 +101,7 @@ interface PermissionsResponse {
 export class Subsidenavbar implements OnInit {
   @Input() section = '';
   optionsForCurrentSection: SubPermission[] = [];
+  isAccordionOpen = true;
 
   sectionOptions: { [key: string]: SubPermission[] } = {};
 
@@ -121,10 +122,15 @@ export class Subsidenavbar implements OnInit {
     this.menuService.selectedSection$.subscribe((section) => {
       if (section) {
         this.loadSubMenu(section);
+        this.isAccordionOpen = true;
       } else {
         this.optionsForCurrentSection = [];
       }
     });
+  }
+
+  toggleAccordion() {
+    this.isAccordionOpen = !this.isAccordionOpen;
   }
 
   private loadSubMenu(section: string) {
