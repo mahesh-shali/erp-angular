@@ -17,6 +17,7 @@ export class Navbar implements OnInit {
   [x: string]: any;
   currentUrl: string = '';
   selectedSection: string = '';
+  isMobileMenuOpen = false;
 
   constructor(
     public auth: AuthService,
@@ -44,6 +45,14 @@ export class Navbar implements OnInit {
 
   isHomePage(): boolean {
     return this.router.url === '/home';
+  }
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  toggleSidebar() {
+    this.uiService.toggleSidebar();
   }
 
   logout() {

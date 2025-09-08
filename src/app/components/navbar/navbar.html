@@ -3,7 +3,12 @@
   class="fixed top-0 left-0 w-full bg-white shadow-md z-50"
 >
   <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-    <div class="text-xl font-bold text-gray-800">ERP Dashboard</div>
+    <div class="flex items-center space-x-4">
+      <button class="md:hidden" *ngIf="!isHomePage()" (click)="toggleSidebar()">
+        &#9776;
+      </button>
+      <div class="text-xl font-bold text-gray-800">ERP Dashboard</div>
+    </div>
 
     <ul class="hidden md:flex space-x-6 text-gray-700 font-medium">
       <li *ngIf="!auth.isLoggedIn()">
@@ -77,5 +82,63 @@
         <a (click)="logout()" class="cursor-pointer text-red-500"> Logout </a>
       </li>
     </ul>
+
+    <div class="md:hidden relative">
+      <button (click)="toggleMobileMenu()" class="text-gray-700 text-2xl">
+        &#8942;
+      </button>
+
+      <ul
+        *ngIf="isMobileMenuOpen"
+        class="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2 z-50"
+      >
+        <li *ngIf="!auth.isLoggedIn()">
+          <a routerLink="/home" class="block px-4 py-2 hover:bg-gray-100"
+            >Home</a
+          >
+        </li>
+        <li *ngIf="isHomePage()" [ngSwitch]="auth.getRoleId()">
+          <ng-container *ngSwitchCase="1">
+            <a
+              routerLink="s/dashboard"
+              class="block px-4 py-2 hover:bg-gray-100"
+              >Dashboard</a
+            >
+          </ng-container>
+          <ng-container *ngSwitchCase="2">
+            <a
+              routerLink="a/dashboard"
+              class="block px-4 py-2 hover:bg-gray-100"
+              >Dashboard</a
+            >
+          </ng-container>
+        </li>
+        <li>
+          <a
+            routerLink="s/ai"
+            (click)="onAiClick()"
+            class="block px-4 py-2 hover:bg-gray-100"
+            >AI</a
+          >
+        </li>
+        <li>
+          <a routerLink="/about" class="block px-4 py-2 hover:bg-gray-100"
+            >About</a
+          >
+        </li>
+        <li *ngIf="!auth.isLoggedIn() && !isLoginPage()">
+          <a routerLink="/login" class="block px-4 py-2 hover:bg-gray-100"
+            >Login</a
+          >
+        </li>
+        <li *ngIf="auth.isLoggedIn() && !isLoginPage()">
+          <a
+            (click)="logout()"
+            class="block px-4 py-2 text-red-500 hover:bg-gray-100"
+            >Logout</a
+          >
+        </li>
+      </ul>
+    </div>
   </div>
 </nav>
