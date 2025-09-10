@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-// import { environment } from '../../environments/environment';
-import { environment } from 'src/environments/environment.prod';
+import { environment } from 'src/environments/environment';
 import { StorageService } from './StorageService';
 
 export interface LoginPayload {
@@ -56,9 +55,9 @@ export class AuthService {
   }
 
   login(dto: LoginPayload): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(this.loginUrl, dto).pipe(
+    return this.http.post<LoginResponse>(this.loginUrl, dto, { withCredentials: true }).pipe(
       tap((response: LoginResponse) => {
-        localStorage.setItem('token', response.token);
+        // Token is now stored in HttpOnly cookie by the server
         if (response.roleId !== null) {
           localStorage.setItem('roleId', response.roleId.toString());
         }
@@ -69,14 +68,15 @@ export class AuthService {
   }
 
   setLoginState(token: string, roleId: number) {
-    localStorage.setItem('token', token);
+    // Token is managed via HttpOnly cookie; no local storage for token
     localStorage.setItem('roleId', roleId.toString());
     this.loginState.next(roleId);
     this._roleId.next(roleId);
   }
 
   isLoggedIn(): boolean {
-    return !!this.storage.get('token');
+    // With cookie auth, consider calling a /auth/me endpoint; fallback to roleId presence
+    return !!this.storage.get('roleId');
   }
 
   getRoleId(): number | null {
@@ -84,7 +84,7 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    // No token in localStorage when using cookies
     localStorage.removeItem('roleId');
     localStorage.removeItem('lastRoute');
     localStorage.removeItem('subPermissions');

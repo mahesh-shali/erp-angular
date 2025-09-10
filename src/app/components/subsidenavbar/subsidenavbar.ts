@@ -76,7 +76,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { MenuService } from '../../services/menu.service';
 import { AuthService } from '../../services/auth';
-import { environment } from 'src/environments/environment.prod';
+import { environment } from 'src/environments/environment';
 
 interface SubPermission {
   label: string;
@@ -134,27 +134,12 @@ export class Subsidenavbar implements OnInit {
   }
 
   private loadSubMenu(section: string) {
-    const roleId = localStorage.getItem('roleId');
-    const token = localStorage.getItem('token');
-
-    if (!roleId) {
-      console.error('Missing roleId for submenu load');
-      return;
-    }
-
-    if (!token) {
-      console.warn('Unauthorized: missing token');
-      this.router.navigate(['/login']);
-      return;
-    }
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
+    const headers = new HttpHeaders({});
 
     this.http
-      .get<PermissionsResponse>(`${this.apiUrl}/auth/permissions/${roleId}`, {
+      .get<PermissionsResponse>(`${this.apiUrl}/auth/permissions`, {
         headers,
+        withCredentials: true,
       })
       .subscribe({
         next: (data) => {
@@ -164,11 +149,7 @@ export class Subsidenavbar implements OnInit {
         },
         error: (err) => {
           console.error('Error loading sub nav items', err);
-          if (err.status === 401) {
-            console.warn('Unauthorized! Redirecting to login...');
-            this.auth.logout(); // optionally clear auth state
-            this.router.navigate(['/login']);
-          }
+          // Do not force logout here; rely on global auth flow
         },
       });
   }
