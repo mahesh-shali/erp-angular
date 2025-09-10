@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { CommonModule } from '@angular/common';
@@ -18,6 +18,7 @@ export class Navbar implements OnInit {
   currentUrl: string = '';
   selectedSection: string = '';
   isMobileMenuOpen = false;
+  @ViewChild('mobileMenu') mobileMenuRef?: ElementRef<HTMLElement>;
 
   constructor(
     public auth: AuthService,
@@ -49,6 +50,15 @@ export class Navbar implements OnInit {
 
   toggleMobileMenu() {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!this.isMobileMenuOpen) return;
+    const container = this.mobileMenuRef?.nativeElement;
+    if (container && !container.contains(event.target as Node)) {
+      this.isMobileMenuOpen = false;
+    }
   }
 
   toggleSidebar() {

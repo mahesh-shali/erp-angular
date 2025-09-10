@@ -1,7 +1,7 @@
 <div
-  [ngClass]="section ? 'ml-70 transition-all duration-300' : 'ml-42 transition-all duration-300'"
+  [ngClass]="section ? 'md:ml-70 transition-all duration-300' : 'md:ml-42 transition-all duration-300'"
 >
-  <div class="flex justify-center items-center">
+  <div class="flex flex-wrap justify-center items-center gap-6 p-6">
     <div
       class="max-w-sm mx-auto bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200"
     >
@@ -56,11 +56,11 @@
 
 <div
   *ngIf="showModal"
-  class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+  class="fixed inset-0 bg-black/50 flex flex-wrap items-center justify-center z-50"
   (click)="showModal = false"
 >
   <div
-    class="bg-white p-6 rounded-xl shadow-xl w-[100rem] h-[50rem] relative"
+    class="bg-white p-6 rounded-xl shadow-xl w-full max-w-4xl h-auto max-h-[90vh] overflow-y-auto relative"
     (click)="$event.stopPropagation()"
   >
     <button
@@ -83,7 +83,7 @@
           name="name"
           required
           [(ngModel)]="formData.name"
-          class="mt-1 p-1 px-2 block w-1/4 rounded-md border-gray-600 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+          class="mt-1 p-1 px-2 block md:w-1/4 rounded-md border-gray-600 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
         />
       </div>
       <div>
@@ -96,7 +96,7 @@
           name="email"
           required
           [(ngModel)]="formData.email"
-          class="mt-1 p-1 px-2 block w-1/4 rounded-md border-gray-500 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+          class="mt-1 p-1 px-2 block md:w-1/4 rounded-md border-gray-500 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
         />
       </div>
       <div>
@@ -109,7 +109,7 @@
           name="password"
           required
           [(ngModel)]="formData.password"
-          class="mt-1 p-1 px-2 block w-1/4 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+          class="mt-1 p-1 px-2 block md:w-1/4 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
         />
       </div>
       <div class="flex justify-end gap-2 pt-4">
