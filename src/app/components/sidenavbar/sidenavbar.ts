@@ -126,6 +126,7 @@ import { MenuService } from '../../services/menu.service';
 import { UiService } from '../../services/ui.service';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment.prod';
+import { PermissionsService } from '../../services/permissions.service';
 
 interface PermissionsResponse {
   mainPermissions: SidebarItem[];
@@ -162,7 +163,8 @@ export class Sidenavbar implements OnInit, OnDestroy {
     private auth: AuthService,
     private menuService: MenuService,
     private router: Router,
-    public uiService: UiService
+    public uiService: UiService,
+    private permissionsService: PermissionsService
   ) {
     this.sub = this.uiService.closeSubsidenav$.subscribe(() => {
       this.selectedSection = null; // collapse subsidenav
@@ -177,17 +179,17 @@ export class Sidenavbar implements OnInit, OnDestroy {
     this.auth.loginState$.subscribe((roleId) => {
       if (roleId) {
         this.loadMenu(roleId);
+        const token = localStorage.getItem('token') || '';
+        this.permissionsService.startPolling(roleId, token);
       } else {
         this.navItems = [];
+        this.permissionsService.stopPolling();
       }
     });
   }
 
   private loadMenu(roleId: number) {
     const cache = localStorage.getItem('mainPermissions');
-    const token = localStorage.getItem('token');
-
-    // Use cache if present; only fetch once per session. Cache is cleared on logout.
     if (cache) {
       try {
         const cached = JSON.parse(cache) as SidebarItem[];
@@ -196,42 +198,30 @@ export class Sidenavbar implements OnInit, OnDestroy {
       } catch {}
     }
 
-    if (!token) {
-      console.warn('No token found. User might not be logged in.');
-      this.router.navigate(['/login']);
-      return;
-    }
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
+    // If no cache yet, subscribe once to the permissions stream for the first value
+    const sub = this.permissionsService.mainPermissions$.subscribe((list) => {
+      if (list && list.length) {
+        this.navItems = list.filter((item: SidebarItem) => item.isvisible);
+        sub.unsubscribe();
+      }
     });
-
-    this.http
-      .get<PermissionsResponse>(`${this.apiUrl}/auth/permissions/${roleId}`, {
-        headers,
-      })
-      .subscribe({
-        next: (data) => {
-          const mainPermissions = data.mainPermissions || [];
-          localStorage.setItem('mainPermissions', JSON.stringify(mainPermissions));
-
-          this.navItems = mainPermissions.filter(
-            (item: SidebarItem) => item.isvisible
-          );
-        },
-        error: (err) => {
-          console.error('Error loading nav items', err);
-          if (err.status === 401) {
-            console.warn('Unauthorized! Redirecting to login...');
-            this.auth.logout(); // optionally clear token + auth state
-            this.router.navigate(['/login']);
-          }
-        },
-      });
   }
 
   selectSection(section: string) {
-    // Toggle mobile accordion when the same section is clicked; otherwise open and load
+    const normalized = section.toLowerCase();
+
+    // Special handling for Dashboard: never open mobile submenu/accordion
+    if (normalized === 'dashboard') {
+      this.selectedSection = section;
+      this.mobileAccordionOpen = false; // ensure accordion is closed
+      this.optionsForCurrentSection = []; // clear any prior submenu options
+      this.menuService.setSelectedSection(''); // collapse subsidenav state
+      this.sectionSelected.emit(section);
+      this.router.navigate(['s/dashboard']);
+      return;
+    }
+
+    // Toggle mobile accordion when the same non-dashboard section is clicked; otherwise open and load
     if (this.selectedSection === section) {
       this.mobileAccordionOpen = !this.mobileAccordionOpen;
     } else {
@@ -241,20 +231,15 @@ export class Sidenavbar implements OnInit, OnDestroy {
 
     this.sectionSelected.emit(section);
 
-    switch (section.toLowerCase()) {
-      case 'dashboard':
-        this.router.navigate(['s/dashboard']);
-        break;
-      case 'ai':
-        this.menuService.setSelectedSection('');
-        this.router.navigate(['s/ai']);
-        break;
-      default:
-        this.menuService.setSelectedSection(section);
-        // Load submenu options for accordion (mobile)
-        this.loadSubMenu(section);
-        break;
+    if (normalized === 'ai') {
+      this.menuService.setSelectedSection('');
+      this.router.navigate(['s/ai']);
+      return;
     }
+
+    this.menuService.setSelectedSection(section);
+    // Load submenu options for accordion (mobile)
+    this.loadSubMenu(section);
   }
 
   ngOnDestroy() {
