@@ -125,7 +125,7 @@ import { AuthService } from '../../services/auth';
 import { MenuService } from '../../services/menu.service';
 import { UiService } from '../../services/ui.service';
 import { Subscription } from 'rxjs';
-import { environment } from 'src/environments/environment.prod';
+import { environment } from 'src/environments/environment';
 import { PermissionsService } from '../../services/permissions.service';
 
 interface PermissionsResponse {
@@ -265,9 +265,9 @@ export class Sidenavbar implements OnInit, OnDestroy {
       return;
     }
 
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    const headers = new HttpHeaders({});
     this.http
-      .get<PermissionsResponse>(`${this.apiUrl}/auth/permissions/${roleId}`, { headers })
+      .get<PermissionsResponse>(`${this.apiUrl}/auth/permissions`, { headers, withCredentials: true })
       .subscribe({
         next: (data) => {
           const list = (data.subPermissions || []).filter((p: any) => p.isvisible);

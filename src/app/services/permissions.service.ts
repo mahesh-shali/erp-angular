@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment.prod';
+import { environment } from 'src/environments/environment';
 import { SidebarItem } from '../constants/constants';
 
 interface PermissionsResponse {
@@ -30,19 +30,20 @@ export class PermissionsService {
   constructor(private http: HttpClient) {}
 
   startPolling(roleId: number, token: string) {
-    if (!roleId || !token) return;
+    if (!roleId) return;
     if (this.startedForRoleId === roleId && this.pollSub) return; // already running
     this.startedForRoleId = roleId;
 
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    // With cookie auth, no Authorization header is needed
+    const headers = new HttpHeaders({});
 
     // Immediately fetch once, then every 5s
     this.pollSub = timer(0, 5000)
       .pipe(
         switchMap(() =>
           this.http.get<PermissionsResponse>(
-            `${this.apiUrl}/auth/permissions/${roleId}`,
-            { headers }
+            `${this.apiUrl}/auth/permissions`,
+            { headers, withCredentials: true }
           )
         )
       )
