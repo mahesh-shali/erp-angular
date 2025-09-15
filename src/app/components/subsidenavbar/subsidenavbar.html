@@ -1,7 +1,7 @@
-<!-- Mobile: subsidenavbar hidden; mobile submenu is handled inside Sidenavbar -->
+<!-- Mobile: subsidenavbar hidden; mobile submenu is handled inside Sidenavbar
 <div class="hidden md:block"></div>
 
-<!-- Desktop subsidebar: original behavior -->
+<-- Desktop subsidebar: original behavior      
 <div
   class="hidden md:flex h-screen bg-gray-200 flex-col border-r p-4 ml-38 top-13 fixed"
   *ngIf="section && section.toLowerCase() !== 'home' && !isLoginPage()"
@@ -27,4 +27,137 @@
       ></div>
     </div>
   </ng-template>
+</div> -->
+
+<!-- Desktop subsidebar: show only if section exists and not on login/home -->
+<!-- Desktop View (unchanged) -->
+<div
+  class="hidden md:flex h-screen bg-gray-200 flex-col border-r p-4 ml-38 top-13 fixed"
+  *ngIf="section && section.toLowerCase() !== 'home' && !isLoginPage()"
+>
+  <ng-container *ngIf="optionsForCurrentSection.length; else noOptionsDesktop">
+    <ul>
+      <li *ngFor="let item of optionsForCurrentSection">
+        <!-- Case 1: If item has nestedPermissions -->
+        <div
+          *ngIf="item.nestedPermissions && item.nestedPermissions.length > 0"
+        >
+          <div class="submenu-header" (click)="toggleNested(item)">
+            <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+            <span>{{ item.option }}</span>
+            <mat-icon
+              >{{ item.isOpen ? 'expand_less' : 'expand_more' }}</mat-icon
+            >
+          </div>
+          <ul *ngIf="item.isOpen">
+            <li *ngFor="let nested of item.nestedPermissions">
+              <a
+                *ngIf="nested.route; else nestedLabelOnly"
+                [routerLink]="nested.route"
+                routerLinkActive="bg-blue-500 text-white rounded-md px-2 py-1"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                <mat-icon *ngIf="nested.icon">{{ nested.icon }}</mat-icon>
+                {{ nested.option }}
+              </a>
+              <ng-template #nestedLabelOnly>
+                <span class="disabled">
+                  <mat-icon *ngIf="nested.icon">{{ nested.icon }}</mat-icon>
+                  {{ nested.option }}
+                </span>
+              </ng-template>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Case 2: If no nestedPermissions -->
+        <div
+          *ngIf="!item.nestedPermissions || item.nestedPermissions.length === 0"
+        >
+          <a
+            *ngIf="item.route; else labelOnly"
+            [routerLink]="item.route"
+            routerLinkActive="bg-blue-500 text-white rounded-md px-2 py-1"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+            {{ item.option }}
+          </a>
+          <ng-template #labelOnly>
+            <span class="disabled">
+              <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+              {{ item.option }}
+            </span>
+          </ng-template>
+        </div>
+      </li>
+    </ul>
+  </ng-container>
+
+  <ng-template #noOptionsDesktop>
+    <div class="flex justify-center items-center">
+      <div
+        class="animate-spin rounded-full border-4 border-t-blue-500 border-b-blue-500 border-gray-300"
+        style="width: 2rem; height: 2rem; justify-items: center"
+      ></div>
+    </div>
+  </ng-template>
 </div>
+
+<!-- Mobile View -->
+<!-- <div
+  class="md:hidden bg-gray-200 h-screen p-4 overflow-auto"
+  *ngIf="section && section.toLowerCase() !== 'home' && !isLoginPage()"
+>
+  <ul>
+    <li *ngFor="let item of optionsForCurrentSection" class="mb-1">
+       Parent item 
+      <div
+        class="flex justify-between items-center p-2 rounded-md hover:bg-gray-300 cursor-pointer"
+        (click)="item.nestedPermissions.length ? toggleNested(item) : navigate(item)"
+      >
+        <div class="flex items-center gap-2">
+          <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+          <span>{{ item.option }}</span>
+        </div>
+        Show arrow only if nestedPermissions exist 
+        <mat-icon *ngIf="item.nestedPermissions?.length">
+          {{ item.isOpen ? 'expand_less' : 'expand_more' }}
+        </mat-icon>
+      </div>
+
+       Nested items 
+      <ul *ngIf="item.isOpen" class="pl-6 mt-1">
+        <li *ngFor="let nested of item.nestedPermissions" class="mb-1">
+          <div
+            class="flex justify-between items-center p-2 rounded-md hover:bg-gray-300 cursor-pointer"
+            (click)="nested.nestedPermissions.length ? toggleNested(nested) : navigate(nested)"
+          >
+            <div class="flex items-center gap-2">
+              <mat-icon *ngIf="nested.icon">{{ nested.icon }}</mat-icon>
+              <span>{{ nested.option }}</span>
+            </div>
+            <mat-icon *ngIf="nested.nestedPermissions?.length">
+              {{ nested.isOpen ? 'expand_less' : 'expand_more' }}
+            </mat-icon>
+          </div>
+
+           Nested of nested 
+          <ul *ngIf="nested.isOpen" class="pl-6 mt-1">
+            <li *ngFor="let child of nested.nestedPermissions" class="mb-1">
+              <a
+                [routerLink]="child.route"
+                routerLinkActive="bg-blue-500 text-white rounded-md px-2 py-1"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="flex items-center gap-2 p-2 rounded-md hover:bg-gray-300"
+              >
+                <mat-icon *ngIf="child.icon">{{ child.icon }}</mat-icon>
+                {{ child.option }}
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div> -->

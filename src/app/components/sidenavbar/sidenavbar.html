@@ -1,9 +1,9 @@
-<!-- Mobile sidebar (toggleable) -->
+<!-- Mobile sidebar (toggleable) 
 <div
   class="md:hidden w-38 h-screen bg-gray-800 text-white flex flex-col space-y-2 p-2 top-12 fixed mt-1"
   *ngIf="!isLoginPage() && (uiService.sidebarOpen$ | async)"
 >
-  <!-- <button class="self-end p-1 text-gray-300 hover:text-white" (click)="uiService.closeSidebar()">✕</button> -->
+  <!-- <button class="self-end p-1 text-gray-300 hover:text-white" (click)="uiService.closeSidebar()">✕</button> 
   <button
     *ngFor="let item of navItems"
     (click)="selectSection(item.section)"
@@ -17,7 +17,7 @@
     <span>{{ item.label }}</span>
   </button>
 
-  <!-- Nested accordion for selected section on mobile -->
+  <!-- Nested accordion for selected section on mobile 
   <div *ngIf="mobileAccordionOpen && optionsForCurrentSection.length" class="ml-4 mt-1 space-y-1">
     <a
       *ngFor="let sub of optionsForCurrentSection"
@@ -31,6 +31,143 @@
       {{ sub.option }}
     </a>
   </div>
+</div> -->
+
+<!-- Mobile sidebar (toggleable, full hierarchy) -->
+<!-- Mobile sidebar (hierarchical view) -->
+<!-- Mobile sidebar -->
+<!-- Mobile Sidebar -->
+<!-- <div
+  class="md:hidden w-64 h-screen bg-gray-800 text-white flex flex-col space-y-1 p-2 top-12 fixed mt-1 overflow-y-auto"
+  *ngIf="!isLoginPage() && (uiService.sidebarOpen$ | async)"
+>
+  <ng-container *ngFor="let top of mobileSidebarItems">
+
+    <div
+      class="p-2 font-semibold cursor-pointer flex justify-between items-center bg-gray-900 rounded"
+      (click)="top.isOpen = !top.isOpen"
+    >
+      <span>{{ top.label }}</span>
+      <mat-icon *ngIf="top.subPermissions?.length">
+        {{ top.isOpen ? 'expand_less' : 'expand_more' }}
+      </mat-icon>
+    </div>
+
+    
+    <div class="ml-4" *ngIf="top.isOpen">
+      <ng-container *ngFor="let second of top.subPermissions">
+        <div
+          class="py-1 px-2 cursor-pointer flex justify-between items-center bg-gray-700 rounded hover:bg-gray-600"
+          (click)="second.nestedPermissions?.length ? (second.isOpen = !second.isOpen) : navigate(second)"
+        >
+          <span>{{ second.option }}</span>
+          <mat-icon *ngIf="second.nestedPermissions?.length">
+            {{ second.isOpen ? 'expand_less' : 'expand_more' }}
+          </mat-icon>
+        </div>
+
+   
+        <div *ngIf="second.isOpen" class="ml-4">
+          <ng-container *ngFor="let third of second.nestedPermissions">
+            <div
+              class="flex justify-between items-center p-2 rounded-md hover:bg-gray-600 cursor-pointer"
+              (click)="third.nestedPermissions?.length ? (third.isOpen = !third.isOpen) : navigate(third)"
+            >
+              <div class="flex items-center gap-2">
+                <mat-icon *ngIf="third.icon">{{ third.icon }}</mat-icon>
+                <span>{{ third.option }}</span>
+              </div>
+              <mat-icon *ngIf="third.nestedPermissions?.length">
+                {{ third.isOpen ? 'expand_less' : 'expand_more' }}
+              </mat-icon>
+            </div>
+
+            
+            <ul *ngIf="third.isOpen" class="pl-6 mt-1">
+              <li *ngFor="let fourth of third.nestedPermissions" class="mb-1">
+                <a
+                  [routerLink]="fourth.route"
+                  routerLinkActive="bg-blue-500 text-white rounded-md px-2 py-1"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  class="flex items-center gap-2 p-2 rounded-md hover:bg-gray-500"
+                >
+                  <mat-icon *ngIf="fourth.icon">{{ fourth.icon }}</mat-icon>
+                  {{ fourth.option }}
+                </a>
+              </li>
+            </ul>
+          </ng-container>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+</div> -->
+
+<div
+  class="md:hidden w-64 h-screen bg-gray-800 text-white flex flex-col space-y-1 p-2 top-12 fixed mt-1 overflow-y-auto"
+  *ngIf="!isLoginPage() && (uiService.sidebarOpen$ | async)"
+>
+  <ng-container *ngFor="let top of mobileSidebarItems">
+    <!-- Top-level -->
+    <div
+      class="p-2 font-semibold cursor-pointer flex justify-between items-center bg-gray-900 rounded"
+      (click)="selectSection(top.section)"
+    >
+      <span>{{ top.label }}</span>
+      <mat-icon *ngIf="top.subPermissions?.length">
+        {{ top.isOpen ? 'expand_less' : 'expand_more' }}
+      </mat-icon>
+    </div>
+
+    <!-- Second level -->
+    <div class="ml-4" *ngIf="top.isOpen">
+      <ng-container *ngFor="let second of top.subPermissions">
+        <div
+          class="py-1 px-2 cursor-pointer flex justify-between items-center bg-gray-700 rounded hover:bg-gray-600"
+          (click)="second.nestedPermissions?.length ? toggleSubPermission(second, $event) : navigate(second, $event)"
+        >
+          <span>{{ second.option }}</span>
+          <mat-icon *ngIf="second.nestedPermissions?.length">
+            {{ second.isOpen ? 'expand_less' : 'expand_more' }}
+          </mat-icon>
+        </div>
+
+        <!-- Third level -->
+        <div *ngIf="second.isOpen" class="ml-4">
+          <ng-container *ngFor="let third of second.nestedPermissions">
+            <div
+              class="flex justify-between items-center p-2 rounded-md hover:bg-gray-600 cursor-pointer"
+              (click)="(third.nestedPermissions ?? []).length ? toggleNestedPermission(third, $event) : navigate(third, $event)"
+            >
+              <div class="flex items-center gap-2">
+                <mat-icon *ngIf="third.icon">{{ third.icon }}</mat-icon>
+                <span>{{ third.option }}</span>
+              </div>
+              <mat-icon *ngIf="(third.nestedPermissions ?? []).length">
+                {{ third.isOpen ? 'expand_less' : 'expand_more' }}
+              </mat-icon>
+            </div>
+
+            <!-- Fourth level -->
+            <ul *ngIf="third.isOpen" class="pl-6 mt-1">
+              <li *ngFor="let fourth of third.nestedPermissions" class="mb-1">
+                <a
+                  [routerLink]="fourth.route"
+                  routerLinkActive="bg-blue-500 text-white rounded-md px-2 py-1"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  class="flex items-center gap-2 p-2 rounded-md hover:bg-gray-500"
+                  (click)="$event.stopPropagation()"
+                >
+                  <mat-icon *ngIf="fourth.icon">{{ fourth.icon }}</mat-icon>
+                  {{ fourth.option }}
+                </a>
+              </li>
+            </ul>
+          </ng-container>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
 </div>
 
 <!-- Desktop sidebar (always visible) -->
