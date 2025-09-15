@@ -12,6 +12,7 @@
 npm-debug.log
 yarn-error.log
 
+
 # IDEs and editors
 .idea/
 .project
@@ -43,7 +44,7 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
-
+client.zip
 
 # Environment files
 # .env
