@@ -266,7 +266,8 @@ export class PermissionsService {
     if (!roleId) return;
     if (this.startedForRoleId === roleId && this.pollSub) return;
     this.startedForRoleId = roleId;
-    const headers = new HttpHeaders({});
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
     this.pollSub = timer(0, 5000)
       .pipe(
