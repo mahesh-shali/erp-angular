@@ -274,7 +274,7 @@ export class PermissionsService {
         switchMap(() =>
           this.http.get<MainPermission[]>(`${this.apiUrl}/auth/permissions`, {
             headers,
-            // withCredentials: true,
+            withCredentials: true,
           })
         )
       )
