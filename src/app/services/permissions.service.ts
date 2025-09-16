@@ -181,7 +181,7 @@
 //     } catch {}
 //   }
 // }
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -266,11 +266,13 @@ export class PermissionsService {
     if (!roleId) return;
     if (this.startedForRoleId === roleId && this.pollSub) return;
     this.startedForRoleId = roleId;
+    const headers = new HttpHeaders({});
 
     this.pollSub = timer(0, 5000)
       .pipe(
         switchMap(() =>
           this.http.get<MainPermission[]>(`${this.apiUrl}/auth/permissions`, {
+            headers,
             withCredentials: true,
           })
         )

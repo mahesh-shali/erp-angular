@@ -124,7 +124,7 @@
       <ng-container *ngFor="let second of top.subPermissions">
         <div
           class="py-1 px-2 cursor-pointer flex justify-between items-center bg-gray-700 rounded hover:bg-gray-600"
-          (click)="second.nestedPermissions?.length ? toggleSubPermission(second, $event) : navigate(second, $event)"
+          (click)="second.nestedPermissions.length ? toggleSubPermission(second, $event) : navigate(second, $event)"
         >
           <span>{{ second.option }}</span>
           <mat-icon *ngIf="second.nestedPermissions?.length">
