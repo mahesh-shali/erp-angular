@@ -18,8 +18,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(  
       withXsrfConfiguration({
-        cookieName: 'XSRF-TOKEN', // must match backend cookie name
-        headerName: 'X-XSRF-TOKEN', // must match backend header name
+        cookieName: 'XSRF-TOKEN', 
+        headerName: 'X-XSRF-TOKEN',
       })
     ),
     provideBrowserGlobalErrorListeners(),
