@@ -70,6 +70,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { filter } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -92,6 +93,7 @@ export class App implements OnInit {
   activeSection = '';
   selectedSection: string = '';
   currentSection: string = '';
+  private apiUrl = environment.apiUrl;
 
   constructor(
     public authService: AuthService,
@@ -101,6 +103,9 @@ export class App implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const loginUrl = `${this.apiUrl}/auth/login`;
+    this.http.get(`${loginUrl}`).subscribe();
+
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {

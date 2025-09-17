@@ -55,16 +55,18 @@ export class AuthService {
   }
 
   login(dto: LoginPayload): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(this.loginUrl, dto, { withCredentials: true }).pipe(
-      tap((response: LoginResponse) => {
-        // Token is now stored in HttpOnly cookie by the server
-        if (response.roleId !== null) {
-          localStorage.setItem('roleId', response.roleId.toString());
-        }
-        this._roleId.next(response.roleId);
-        this.loginState.next(response.roleId);
-      })
-    );
+    return this.http
+      .post<LoginResponse>(this.loginUrl, dto, { withCredentials: true })
+      .pipe(
+        tap((response: LoginResponse) => {
+          // Token is now stored in HttpOnly cookie by the server
+          if (response.roleId !== null) {
+            localStorage.setItem('roleId', response.roleId.toString());
+          }
+          this._roleId.next(response.roleId);
+          this.loginState.next(response.roleId);
+        })
+      );
   }
 
   setLoginState(token: string, roleId: number) {
