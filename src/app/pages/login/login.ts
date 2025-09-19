@@ -44,6 +44,25 @@ export class Login implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.auth.isLoggedIn()) {
+      const roleId = this.auth.getRoleId(); // implement getRoleId() in AuthService
+      switch (roleId) {
+        case 1:
+          this.router.navigate(['/s/dashboard']);
+          break;
+        case 2:
+          this.router.navigate(['/a/dashboard']);
+          break;
+        case 3:
+          this.router.navigate(['/m/dashboard']);
+          break;
+        case 4:
+          this.router.navigate(['/u/dashboard']);
+          break;
+        default:
+          this.router.navigate(['/']);
+      }
+    }
     setTimeout(() => {
       this.isLoading = false;
     }, 200);

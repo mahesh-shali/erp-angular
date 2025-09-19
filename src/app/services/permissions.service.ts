@@ -187,6 +187,7 @@ import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { SidebarItem } from '../constants/constants';
+import { StorageService } from './StorageService';
 
 export interface SubPermission {
   id: number;
@@ -259,15 +260,23 @@ export class PermissionsService {
 
   private pollSub?: Subscription;
   private startedForRoleId?: number;
+  private xsrfToken: string | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private storageService: StorageService
+  ) {}
 
   startPolling(roleId: number) {
     if (!roleId) return;
     if (this.startedForRoleId === roleId && this.pollSub) return;
     this.startedForRoleId = roleId;
     const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    // const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    const xsrf = this.storageService.get('xsrfToken');
+    const headers = xsrf
+      ? new HttpHeaders({ 'X-XSRF-TOKEN': xsrf })
+      : undefined;
 
     this.pollSub = timer(0, 5000)
       .pipe(

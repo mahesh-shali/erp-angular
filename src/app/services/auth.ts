@@ -21,6 +21,8 @@ export interface LoginResponse {
   providedIn: 'root',
 })
 export class AuthService {
+  xsrfToken: string | null = null;
+  jwtToken: string | null = null;
   private apiUrl = environment.apiUrl;
   private loginUrl = `${this.apiUrl}/auth/login`;
   private registerUrl = `${this.apiUrl}/auth/register`;
@@ -36,6 +38,11 @@ export class AuthService {
   constructor(private http: HttpClient, private storage: StorageService) {
     // Initialize roleId from localStorage on service creation
     const storedRoleId = this.storage.get('roleId');
+    const xsrfCookie = this.getCookie('XSRF-TOKEN');
+    if (xsrfCookie) {
+      this.storage.set('xsrfToken', xsrfCookie);
+    }
+
     if (storedRoleId) {
       this._roleId.next(+storedRoleId);
     }
@@ -69,13 +76,26 @@ export class AuthService {
       );
   }
 
-  setLoginState(token: string, roleId: number) {
+  setLoginState(
+    token: string,
+    roleId: number,
+    xsrfToken?: string,
+    jwtToken?: string
+  ) {
     // Token is managed via HttpOnly cookie; no local storage for token
     localStorage.setItem('roleId', roleId.toString());
+    this.xsrfToken = xsrfToken || null;
+    this.jwtToken = jwtToken || null;
     this.loginState.next(roleId);
     this._roleId.next(roleId);
   }
 
+  getCookie(name: string): string | null {
+    const match = document.cookie.match(
+      new RegExp('(^| )' + name + '=([^;]+)')
+    );
+    return match ? decodeURIComponent(match[2]) : null;
+  }
   isLoggedIn(): boolean {
     // With cookie auth, consider calling a /auth/me endpoint; fallback to roleId presence
     return !!this.storage.get('roleId');
@@ -93,6 +113,7 @@ export class AuthService {
     localStorage.removeItem('subPermissions:timestamp');
     localStorage.removeItem('mainPermissions');
     localStorage.removeItem('mainPermissions:timestamp');
+    localStorage.removeItem('fullPermissions');
     this._roleId.next(null);
     this.loginState.next(null);
   }
