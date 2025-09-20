@@ -31,8 +31,12 @@
 
 <!-- Desktop subsidebar: show only if section exists and not on login/home -->
 <!-- Desktop View (unchanged) -->
-<div
+<!-- <div
   class="hidden md:flex h-screen bg-gray-200 flex-col border-r p-4 ml-38 top-13 fixed"
+  *ngIf="section && section.toLowerCase() !== 'home' && !isLoginPage()"
+> -->
+<div
+  class="hidden md:flex h-screen bg-gray-200 flex-col border-r p-4 py-8 fixed top-13 left-56 w-64 z-40"
   *ngIf="section && section.toLowerCase() !== 'home' && !isLoginPage()"
 >
   <ng-container *ngIf="optionsForCurrentSection.length; else noOptionsDesktop">
@@ -42,7 +46,10 @@
         <div
           *ngIf="item.nestedPermissions && item.nestedPermissions.length > 0"
         >
-          <div class="submenu-header" (click)="toggleNested(item)">
+          <div
+            class="submenu-header flex flex-row justify-between items-center p-2 rounded-md hover:bg-gray-300 cursor-pointer"
+            (click)="toggleNested(item)"
+          >
             <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
             <span>{{ item.option }}</span>
             <mat-icon
@@ -54,14 +61,15 @@
               <a
                 *ngIf="nested.route; else nestedLabelOnly"
                 [routerLink]="nested.route"
-                routerLinkActive="bg-blue-500 text-white rounded-md px-2 py-1"
+                routerLinkActive="bg-blue-400 text-white rounded-md px-2 py-1 md:ml-4"
                 [routerLinkActiveOptions]="{ exact: true }"
-              >
-                <mat-icon *ngIf="nested.icon">{{ nested.icon }}</mat-icon>
-                {{ nested.option }}
+                ><span class="md:ml-4">
+                  <mat-icon *ngIf="nested.icon">{{ nested.icon }}</mat-icon>
+                  {{ nested.option }}
+                </span>
               </a>
               <ng-template #nestedLabelOnly>
-                <span class="disabled">
+                <span class="disabled md:ml-4">
                   <mat-icon *ngIf="nested.icon">{{ nested.icon }}</mat-icon>
                   {{ nested.option }}
                 </span>
@@ -73,11 +81,12 @@
         <!-- Case 2: If no nestedPermissions -->
         <div
           *ngIf="!item.nestedPermissions || item.nestedPermissions.length === 0"
+          class="flex flex-row justify-between items-center p-2 rounded-md hover:bg-gray-300 cursor-pointer"
         >
           <a
             *ngIf="item.route; else labelOnly"
             [routerLink]="item.route"
-            routerLinkActive="bg-blue-500 text-white rounded-md px-2 py-1"
+            routerLinkActive="md:bg-blue-500 text-white rounded-md px-2 py-1"
             [routerLinkActiveOptions]="{ exact: true }"
           >
             <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
