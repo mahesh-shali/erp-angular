@@ -125,20 +125,13 @@ export class App implements OnInit {
     return this.router.url === '/s/dashboard';
   }
 
-  // getMainMarginClass(): string {
-  //   if (this.isHomePage()) return 'md:ml-0';
+  isLoginPage(): boolean {
+    return (
+      this.router.url.includes('/login') ||
+      this.router.url.includes('/register')
+    );
+  }
 
-  //   if (this.isDashboardPage()) {
-  //     // Dashboard special cases
-  //     if (this.showSubnav()) {
-  //       return 'md:ml-0'; // ✅ no margin, since subnav is INSIDE main
-  //     }
-  //     return 'md:ml-64'; // collapsed dashboard sidebar width
-  //   }
-
-  //   // Other pages
-  //   return this.showSubnav() ? 'md:ml-64' : 'md:ml-0';
-  // }
   getMainMarginClass(): string {
     if (this.isHomePage()) return 'md:ml-0';
     if (this.isDashboardPage()) return 'md:ml-56'; // sidenav only
