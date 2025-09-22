@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { AuthService, SectionService } from '../../../../services/auth';
 import { FormsModule } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   Organization,
   OrganizationResponse,
@@ -19,6 +21,7 @@ import { response } from 'express';
 })
 export class Users implements OnInit {
   roleId: number = 0;
+  roles: any[] = [];
   showModal = false;
   formData: {
     id: number | null;
@@ -37,11 +40,27 @@ export class Users implements OnInit {
     name: string;
     email: string;
     password: string;
+    organizationid: number | null;
+    roleId: number | null;
+    phone: string;
+    street: string;
+    city: string;
+    state: string;
+    postalcode: number | null;
+    country: string;
   } = {
     id: null,
     name: '',
     email: '',
     password: '',
+    organizationid: null,
+    roleId: 0,
+    phone: '',
+    street: '',
+    city: '',
+    state: '',
+    postalcode: null,
+    country: '',
   };
 
   orgFormData: {
@@ -66,12 +85,15 @@ export class Users implements OnInit {
   filteredOrgs: any[] = [];
   isLoadingUsers = true;
   isLoadingOrgs = true;
+  editingPassword = false;
   selectedForm: 'user' | 'organization' = 'user';
   private sectionService = inject(SectionService);
   section: string | null = null;
   constructor(
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private toastr: ToastrService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -79,6 +101,7 @@ export class Users implements OnInit {
     this.roleId = this.authService.getRoleId()!;
     this.loadUsers();
     this.loadOrganizations();
+    this.loadRoles();
     this.filteredUsers = this.users;
   }
 
@@ -120,7 +143,7 @@ export class Users implements OnInit {
       next: (res: OrganizationResponse) => {
         // Map API response to proper organization objects
         this.organizations = res.users.map((org) => ({
-          id: org.userid, // use userid as org id
+          id: org.userid ?? org.userid, // use userid as org id
           name: org.name,
           email: org.email || '', // optional
         }));
@@ -130,6 +153,17 @@ export class Users implements OnInit {
       error: (err) => {
         console.error('Failed to fetch organizations', err);
         this.isLoadingOrgs = false;
+      },
+    });
+  }
+
+  loadRoles(): void {
+    this.userService.getRoles().subscribe({
+      next: (data: any) => {
+        this.roles = data.roles;
+      },
+      error: (err) => {
+        console.error('Error loading roles', err);
       },
     });
   }
@@ -151,10 +185,20 @@ export class Users implements OnInit {
       next: (res) => {
         this.selectedUserId = user.id;
         this.selectedOrgId = null;
-        this.formData.id = res.id;
-        this.formData.name = res.name;
-        this.formData.email = res.email;
-        this.formData.password = '';
+        this.userFormData = {
+          id: res.id,
+          name: res.name,
+          email: res.email,
+          password: '', // clear password for security
+          roleId: res.roleId, // populate if available
+          organizationid: res.organizationid || null, // populate if available
+          phone: res.phone,
+          street: res.street,
+          city: res.city,
+          state: res.state,
+          postalcode: res.postalcode,
+          country: res.country,
+        };
       },
       error: (err) => console.error(err),
     });
@@ -177,16 +221,59 @@ export class Users implements OnInit {
   }
 
   createOrModifyUser(): void {
-    if (this.formData.id) {
+    const payload = {
+      ...this.userFormData,
+      id: this.userFormData.id ?? undefined,
+      organizationid: this.userFormData.organizationid ?? undefined, // send selected org id
+      roleId: this.userFormData.roleId!,
+    };
+
+    if (payload.id) {
       // MODIFY
-      console.log('Modify user', this.formData);
-      // Call your update API
+      this.userService.saveUser(payload).subscribe({
+        next: () => {
+          this.toastr.success('User updated successfully!', 'Success'); // Green toast
+          this.resetUserForm();
+          this.loadUsers();
+        },
+        error: (err) => {
+          console.error(err);
+          this.toastr.error('Failed to update user.', 'Error'); // Red toast
+        },
+      });
     } else {
       // CREATE
-      console.log('Create user', this.formData);
-      // Call your create API
+      this.userService.saveUser(payload).subscribe({
+        next: (res: any) => {
+          if (res === 'User already exists.') {
+            this.snackBar.open('User already exists.', 'Close', {
+              duration: 3000,
+              horizontalPosition: 'right',
+              verticalPosition: 'top',
+            });
+          } else {
+            this.snackBar.open('User created successfully!', 'Close', {
+              duration: 3000,
+              horizontalPosition: 'right',
+              verticalPosition: 'top',
+            });
+            this.resetUserForm();
+            this.loadUsers();
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          const msg = err?.error?.message || 'Something went wrong';
+          this.snackBar.open(msg, 'Close', {
+            duration: 3000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+          });
+        },
+      });
     }
   }
+
   createOrModifyOrganization(): void {
     if (this.orgFormData.id) {
       // Modify logic
@@ -200,11 +287,32 @@ export class Users implements OnInit {
     this.showModal = false;
   }
   resetUserForm(): void {
-    this.formData = { id: null, name: '', email: '', password: '' };
+    this.userFormData = {
+      id: null,
+      name: '',
+      email: '',
+      password: '',
+      organizationid: null,
+      roleId: null,
+      phone: '',
+      street: '',
+      city: '',
+      state: '',
+      postalcode: null,
+      country: '',
+    };
     this.selectedUserId = null;
   }
+
   resetOrgForm() {
     this.orgFormData = { id: null, name: '', email: '' };
     this.selectedOrgId = null;
+  }
+
+  allowNumbersOnly(event: KeyboardEvent) {
+    const pattern = /[0-9]/;
+    if (!pattern.test(event.key)) {
+      event.preventDefault();
+    }
   }
 }

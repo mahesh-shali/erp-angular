@@ -9,6 +9,13 @@ export interface User {
   id: number;
   roleId: number;
   name: string;
+  organizationid: number;
+  phone: string;
+  street: string;
+  city: string;
+  state: string;
+  postalcode: number | null;
+  country: string;
 }
 
 export interface UsersResponse {
@@ -69,6 +76,12 @@ export class UserService {
   //     return this.http.get<UsersResponse>(`${this.apiUrl}/user/getUser`);
   //   }
 
+  getRoles(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/role/roles`, {
+      withCredentials: true,
+    });
+  }
+
   getUserById(userId: number): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/user/getUserById/${userId}`, {
       withCredentials: true,
@@ -96,5 +109,37 @@ export class UserService {
         withCredentials: true,
       }
     );
+  }
+
+  saveUser(user: Partial<User>): Observable<User> {
+    if (user.id) {
+      // Update
+      return this.http.put<User>(
+        `${this.apiUrl}/user/updateUser/${user.id}`,
+        user,
+        {
+          withCredentials: true,
+        }
+      );
+    } else {
+      // Create
+      return this.http.post<User>(`${this.apiUrl}/user/createUser`, user, {
+        withCredentials: true,
+      });
+    }
+  }
+
+  saveOrganization(org: Partial<Organization>): Observable<Organization> {
+    if (org.id) {
+      return this.http.put<Organization>(
+        `${this.apiUrl}/organizations/${org.id}`,
+        org
+      );
+    } else {
+      return this.http.post<Organization>(
+        `${this.apiUrl}/user/createUser`,
+        org
+      );
+    }
   }
 }

@@ -45,57 +45,246 @@
               *ngIf="selectedForm === 'user'"
               (ngSubmit)="createOrModifyUser()"
               #userForm="ngForm"
-              class="space-y-5 w-full h-full"
+              class="space-y-5 w-full h-full p-4 relative"
             >
-              <div>
-                <label
-                  for="name"
-                  class="block text-sm font-medium text-gray-700"
-                  >Name</label
-                >
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  [(ngModel)]="userFormData.name"
-                  class="mt-1 block w-1/2 rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                />
+              <div class="flex gap-x-4">
+                <div class="w-1/2">
+                  <label
+                    for="name"
+                    class="block text-sm font-medium text-gray-700"
+                    >Name</label
+                  >
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    required
+                    [(ngModel)]="userFormData.name"
+                    class="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  />
+                </div>
+                <div class="relative w-1/2">
+                  <label
+                    for="organization"
+                    class="block text-sm font-medium text-gray-700"
+                    >Organization</label
+                  >
+
+                  <select
+                    id="organization"
+                    name="organization"
+                    required
+                    [(ngModel)]="userFormData.organizationid"
+                    class="peer mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 appearance-none border p-2 focus:ring-opacity-5 bg-white"
+                  >
+                    <option value="" disabled selected>
+                      Select an organization
+                    </option>
+                    <option *ngFor="let org of organizations" [value]="org.id">
+                      {{ org.name }}
+                    </option>
+                  </select>
+
+                  <!-- Custom dropdown icon -->
+                  <div
+                    class="pointer-events-none absolute right-0 top-1/2 transform -translate-y-1/2 pr-3 transition-transform duration-200 peer-focus:rotate-180 peer-focus:mt-5 peer-focus:mr-2"
+                  >
+                    <svg
+                      class="w-5 h-5 mt-5 text-gray-400"
+                      style="transform-origin: center"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="relative w-1/2">
+                  <label
+                    for="role"
+                    class="block text-sm font-medium text-gray-700"
+                    >Role</label
+                  >
+                  <select
+                    id="role"
+                    name="roleId"
+                    required
+                    [(ngModel)]="userFormData.roleId"
+                    class="peer mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 appearance-none border p-2 focus:ring-opacity-5 bg-white"
+                  >
+                    <option value="" disabled selected>Select the Role</option>
+                    <option *ngFor="let role of roles" [value]="role.id">
+                      {{ role.name }}
+                    </option>
+                  </select>
+                  <div
+                    class="pointer-events-none absolute right-0 top-1/2 transform -translate-y-1/2 pr-3 transition-transform duration-200 peer-focus:rotate-180 peer-focus:mt-5 peer-focus:mr-2"
+                  >
+                    <svg
+                      class="w-5 h-5 mt-5 text-gray-400"
+                      style="transform-origin: center"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-x-4">
+                <div class="w-1/2">
+                  <label
+                    for="email"
+                    class="block text-sm font-medium text-gray-700"
+                    >Email</label
+                  >
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    [(ngModel)]="userFormData.email"
+                    class="mt-1 block w-full max-w-5xl rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  />
+                </div>
+                <div *ngIf="!selectedUserId" class="w-1/2">
+                  <label
+                    for="password"
+                    class="block text-sm font-medium text-gray-700"
+                  >
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                    [(ngModel)]="userFormData.password"
+                    class="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  />
+                </div>
+              </div>
+              <div class="flex gap-x-4">
+                <div class="w-1/2">
+                  <label
+                    for="phone"
+                    class="block text-sm font-medium text-gray-700"
+                    >Phone Number</label
+                  >
+                  <input
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    maxlength="10"
+                    (keypress)="allowNumbersOnly($event)"
+                    required
+                    [(ngModel)]="userFormData.phone"
+                    class="mt-1 block w-full max-w-5xl rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  />
+                </div>
+                <div class="w-1/2">
+                  <label
+                    for="street"
+                    class="block text-sm font-medium text-gray-700"
+                  >
+                    Street
+                  </label>
+                  <input
+                    type="text"
+                    id="street"
+                    name="street"
+                    required
+                    [(ngModel)]="userFormData.street"
+                    class="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  />
+                </div>
+              </div>
+              <div class="flex gap-x-4">
+                <div class="w-1/2">
+                  <label
+                    for="city"
+                    class="block text-sm font-medium text-gray-700"
+                    >City</label
+                  >
+                  <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    required
+                    [(ngModel)]="userFormData.city"
+                    class="mt-1 block w-full max-w-5xl rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  />
+                </div>
+                <div class="w-1/2">
+                  <label
+                    for="state"
+                    class="block text-sm font-medium text-gray-700"
+                  >
+                    Street
+                  </label>
+                  <input
+                    type="text"
+                    id="state"
+                    name="state"
+                    required
+                    [(ngModel)]="userFormData.state"
+                    class="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  />
+                </div>
+              </div>
+              <div class="flex gap-x-4">
+                <div class="w-1/2">
+                  <label
+                    for="postalcode"
+                    class="block text-sm font-medium text-gray-700"
+                    >Postal Code</label
+                  >
+                  <input
+                    type="text"
+                    id="postalcode"
+                    name="postalcode"
+                    pattern="[0-9]*"
+                    maxlength="6"
+                    (keypress)="allowNumbersOnly($event)"
+                    required
+                    [(ngModel)]="userFormData.postalcode"
+                    class="mt-1 block w-full max-w-5xl rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  />
+                </div>
+                <div class="w-1/2">
+                  <label
+                    for="country"
+                    class="block text-sm font-medium text-gray-700"
+                  >
+                    Country
+                  </label>
+                  <input
+                    type="text"
+                    id="country"
+                    name="country"
+                    required
+                    [(ngModel)]="userFormData.country"
+                    class="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label
-                  for="email"
-                  class="block text-sm font-medium text-gray-700"
-                  >Email</label
-                >
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  [(ngModel)]="userFormData.email"
-                  class="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                />
-              </div>
-
-              <div>
-                <label
-                  for="password"
-                  class="block text-sm font-medium text-gray-700"
-                  >Password</label
-                >
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  required
-                  [(ngModel)]="userFormData.password"
-                  class="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                />
-              </div>
-
-              <div class="flex justify-end gap-3 pt-4">
+              <div class="absolute bottom-10 right-4 flex gap-3">
                 <button
                   type="button"
                   (click)="resetUserForm()"

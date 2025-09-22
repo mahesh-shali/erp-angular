@@ -2,8 +2,13 @@ import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
+  importProvidersFrom,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { ToastrModule, provideToastr } from 'ngx-toastr';
 
 import { routes } from './app.routes';
 import {
@@ -21,6 +26,13 @@ import { XsrfInterceptor } from './interceptors/xsrf.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    importProvidersFrom(BrowserAnimationsModule),
+    provideToastr({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    }),
+    MatSnackBarModule,
     provideHttpClient(
       withXsrfConfiguration({
         cookieName: 'XSRF-TOKEN',

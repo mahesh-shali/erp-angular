@@ -4,11 +4,11 @@ import { Home } from './pages/home/home';
 import { Dashboard } from './pages/superAdmin/dashboard/dashboard';
 import { AuthGuard } from './auth-guard';
 import { Users } from './components/SuperAdmin/Masters/users/users';
-import { Overview } from './pages/superAdmin/overview/overview';
 import { Item } from './pages/superAdmin/item/item';
 import { Index } from './pages/ai/index/index';
 import { NotFound } from './pages/not-found/not-found';
 import { LoggedInRedirectGuard } from './services/logged-in-redirect.guard';
+import { UserRights } from './pages/superAdmin/user-rights/user-rights';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -28,8 +28,8 @@ export const routes: Routes = [
     data: { roles: [1] },
   },
   {
-    path: 's/overview',
-    component: Overview,
+    path: 's/user-rights',
+    component: UserRights,
     canActivate: [AuthGuard],
     data: { roles: [1] },
   },

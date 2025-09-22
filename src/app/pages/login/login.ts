@@ -92,13 +92,21 @@ export class Login implements OnInit {
       const { email, password } = this.loginForm.value;
       const dto = { email, password };
       this.auth.login(dto).subscribe({
-        next: (response: { token: string; roleId: number }) => {
-          console.log('Login success:', response);
-
+        next: (response: {
+          token: string;
+          roleId: number;
+          userId: number;
+          // organizationId: number;
+        }) => {
           // localStorage.setItem('token', response.token);
           // localStorage.setItem('roleId', response.roleId.toString());
 
-          this.auth.setLoginState(response.token, response.roleId);
+          this.auth.setLoginState(
+            response.token,
+            response.roleId,
+            response.userId
+            // response.organizationId
+          );
 
           // Route based on role
           switch (response.roleId) {

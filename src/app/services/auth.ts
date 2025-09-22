@@ -13,6 +13,7 @@ export interface LoginResponse {
   token: string;
   userId: number;
   roleId: number;
+  organizationId?: number | null;
   email: string;
   message: string;
 }
@@ -27,8 +28,14 @@ export class AuthService {
   private loginUrl = `${this.apiUrl}/auth/login`;
   private registerUrl = `${this.apiUrl}/auth/register`;
 
+  private _userId = new BehaviorSubject<number | null>(this.getStoredUserId());
   private _roleId = new BehaviorSubject<number | null>(this.getStoredRoleId());
+  private _organizationId = new BehaviorSubject<number | null>(
+    this.getStoredOrganizationId()
+  );
+  userId$ = this._userId.asObservable();
   roleId$ = this._roleId.asObservable();
+  OrganizationId$ = this._organizationId.asObservable();
 
   private loginState = new BehaviorSubject<number | null>(
     this.getStoredRoleId()
@@ -52,6 +59,14 @@ export class AuthService {
     const roleId = this.storage.get('roleId');
     return roleId ? parseInt(roleId, 10) : null;
   }
+  private getStoredUserId(): number | null {
+    const userId = this.storage.get('userId');
+    return userId ? parseInt(userId, 10) : null;
+  }
+  private getStoredOrganizationId(): number | null {
+    const organizationId = this.storage.get('organizationId');
+    return organizationId ? parseInt(organizationId, 10) : null;
+  }
 
   register(dto: {
     name: string;
@@ -69,9 +84,28 @@ export class AuthService {
           // Token is now stored in HttpOnly cookie by the server
           if (response.roleId !== null) {
             localStorage.setItem('roleId', response.roleId.toString());
+            this._roleId.next(response.roleId);
+            this.loginState.next(response.roleId);
           }
-          this._roleId.next(response.roleId);
-          this.loginState.next(response.roleId);
+          if (response.organizationId != null) {
+            localStorage.setItem(
+              'OrganizationId',
+              response.organizationId.toString()
+            );
+            this._organizationId.next(response.organizationId);
+          } else {
+            // Clear or handle missing OrganizationId gracefully
+            localStorage.removeItem('OrganizationId');
+            this._organizationId.next(null);
+          }
+          if (response.userId != null) {
+            localStorage.setItem('userId', response.userId.toString());
+            this._userId.next(response.userId);
+          } else {
+            // Clear or handle missing OrganizationId gracefully
+            localStorage.removeItem('userId');
+            this._userId.next(null);
+          }
         })
       );
   }
@@ -79,6 +113,8 @@ export class AuthService {
   setLoginState(
     token: string,
     roleId: number,
+    userId: number,
+    organizationId?: number | null,
     xsrfToken?: string,
     jwtToken?: string
   ) {
@@ -88,6 +124,20 @@ export class AuthService {
     this.jwtToken = jwtToken || null;
     this.loginState.next(roleId);
     this._roleId.next(roleId);
+    if (organizationId != null) {
+      localStorage.setItem('organizationId', organizationId.toString());
+      this._organizationId.next(organizationId);
+    } else {
+      localStorage.removeItem('organizationId');
+      this._organizationId.next(null);
+    }
+    if (userId != null) {
+      localStorage.setItem('userId', userId.toString());
+      this._userId.next(userId);
+    } else {
+      localStorage.removeItem('userId');
+      this._userId.next(null);
+    }
   }
 
   getCookie(name: string): string | null {
@@ -104,10 +154,18 @@ export class AuthService {
   getRoleId(): number | null {
     return this._roleId.value;
   }
+  getOrganizationId(): number | null {
+    return this._organizationId.value;
+  }
+  getUserId(): number | null {
+    return this._userId.value;
+  }
 
   logout(): void {
     // No token in localStorage when using cookies
     localStorage.removeItem('roleId');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('organizationId');
     localStorage.removeItem('lastRoute');
     localStorage.removeItem('subPermissions');
     localStorage.removeItem('subPermissions:timestamp');
@@ -115,6 +173,8 @@ export class AuthService {
     localStorage.removeItem('mainPermissions:timestamp');
     localStorage.removeItem('fullPermissions');
     this._roleId.next(null);
+    this._userId.next(null);
+    this._organizationId.next(null);
     this.loginState.next(null);
   }
 }

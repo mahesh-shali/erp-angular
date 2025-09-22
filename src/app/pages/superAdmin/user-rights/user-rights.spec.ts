@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Overview } from './overview';
+import { UserRights } from './user-rights';
 
-describe('Overview', () => {
-  let component: Overview;
-  let fixture: ComponentFixture<Overview>;
+describe('UserRights', () => {
+  let component: UserRights;
+  let fixture: ComponentFixture<UserRights>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Overview]
+      imports: [UserRights]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Overview);
+    fixture = TestBed.createComponent(UserRights);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
