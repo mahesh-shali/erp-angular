@@ -1,410 +1,55 @@
-<!-- <div class="p-6 grid grid-cols-12 gap-6">
+<div *ngIf="isLoading; else content">
+  <div class="p-6 grid grid-cols-12 gap-6">
+    <!-- Left panel: Filters -->
+    <div class="col-span-3">
+      <div class="bg-white rounded-lg shadow p-4 mb-4 animate-pulse">
+        <div class="h-6 w-1/2 bg-gray-200 rounded mb-4"></div>
 
-  <div class="col-span-3">
-    <div class="bg-white rounded-lg shadow p-4 mb-4">
-      <h2 class="font-bold text-lg">Employee #{{user.id}}</h2>
-      <p class="text-gray-600">{{user.name}}</p>
-      <div class="mt-4">
-        <p><b>Role:</b> {{user.role}}</p>
-        <p><b>Template:</b> {{user.template}}</p>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-lg shadow p-4">
-      <h3 class="font-bold mb-2">For Company</h3>
-      <div class="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
-        <label *ngFor="let c of companies" class="flex items-center gap-2">
-          <input
-            type="checkbox"
-            [(ngModel)]="selectedCompanies"
-            [value]="c"
-            [checked]="selectedCompanies.includes(c)"
-          />
-          {{c}}
-        </label>
-      </div>
-    </div>
-  </div>
-
-
-  <div class="col-span-9 grid grid-cols-2 gap-4 auto-rows-auto">
-    <div
-      *ngFor="let group of permissionGroups"
-      class="rounded-lg shadow bg-white h-auto"
-    >
-      <div
-        class="p-3 text-white font-bold rounded-t-lg"
-        [ngClass]="group.color"
-      >
-        {{ group.title }}
-      </div>
-      <div class="p-4 space-y-4">
-        <div *ngFor="let perm of group.permissions" class="pb-2">
-          <div class="font-semibold mb-2">{{ perm.label }}</div>
-          <div class="grid grid-cols-3 gap-2">
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.canread" /> Read</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.canwrite" />
-              Write</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.canput" /> Put</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.candelete" />
-              Delete</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.isvisible" />
-              Visible</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.ishidden" />
-              Hidden</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.isrestricted" />
-              Restricted</label
-            >
-          </div>
+        <!-- Skeleton Selects -->
+        <div class="space-y-4">
+          <div class="h-10 bg-gray-200 rounded"></div>
+          <div class="h-10 bg-gray-200 rounded"></div>
+          <div class="h-10 bg-gray-200 rounded"></div>
+          <div class="h-10 bg-gray-200 rounded"></div>
+          <div class="h-10 bg-gray-200 rounded"></div>
+          <div class="h-10 bg-gray-200 rounded"></div>
         </div>
       </div>
     </div>
-  </div>
-</div> -->
-<!-- <div class="p-6 grid grid-cols-12 gap-6">
 
-  <div class="col-span-3">
-    <div class="bg-white rounded-lg shadow p-4 mb-4">
-      <h3 class="font-bold mb-2">Filter Users</h3>
-
-      <div class="mb-4">
-        <label>Company</label>
-        <select
-          [(ngModel)]="selectedCompanyId"
-          (change)="updateFilteredUsers()"
-          class="w-full border rounded p-2"
-        >
-          <option [value]="null">All</option>
-          <option *ngFor="let c of companies" [value]="c.name">
-            {{ c.name }}
-          </option>
-        </select>
-      </div>
-
-      <div class="mb-4">
-        <label>Role</label>
-        <select
-          [(ngModel)]="selectedRoleId"
-          (change)="updateFilteredUsers()"
-          class="w-full border rounded p-2"
-        >
-          <option [value]="null">All</option>
-          <option *ngFor="let r of roles" [value]="r.id">{{ r.name }}</option>
-        </select>
-      </div>
-
-      <div class="mb-4">
-        <label>User</label>
-        <select [(ngModel)]="selectedUserId" class="w-full border rounded p-2">
-          <option [value]="null">Select User</option>
-          <option *ngFor="let u of filteredUsers" [value]="u.name">
-            {{ u.name }}
-          </option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-span-9 grid grid-cols-2 gap-4 auto-rows-auto">
-    <div
-      *ngFor="let group of currentPermissions"
-      class="rounded-lg shadow bg-white h-auto"
-    >
-      <div
-        class="p-3 text-white font-bold rounded-t-lg"
-        [ngClass]="group.color"
-      >
-        {{ group.title }}
-      </div>
-
-      <div class="p-4 space-y-4">
-
-        <div *ngFor="let perm of group.permissions" class="pb-2">
-          <div class="font-semibold mb-2">{{ perm.label }}</div>
-          <div class="grid grid-cols-3 gap-2">
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.canread" /> Read</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.canwrite" />
-              Write</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.canput" /> Put</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.candelete" />
-              Delete</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.isvisible" />
-              Visible</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.ishidden" />
-              Hidden</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.isrestricted" />
-              Restricted</label
-            >
-          </div>
-        </div>
-
-
-        <div
-          *ngFor="let sub of group.subPermissions"
-          class="pl-4 border-l-2 border-gray-200"
-        >
-          <div class="font-semibold">{{ sub.label }}</div>
-
-          <div
-            *ngFor="let sp of sub.permissions"
-            class="grid grid-cols-3 gap-2"
-          >
-            <label
-              ><input type="checkbox" [(ngModel)]="sp.canread" /> Read</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="sp.canwrite" /> Write</label
-            >
-            <label><input type="checkbox" [(ngModel)]="sp.canput" /> Put</label>
-            <label
-              ><input type="checkbox" [(ngModel)]="sp.candelete" />
-              Delete</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="sp.isvisible" />
-              Visible</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="sp.ishidden" /> Hidden</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="sp.isrestricted" />
-              Restricted</label
-            >
-          </div>
-
-
-          <div
-            *ngFor="let np of sub.nestedPermissions"
-            class="pl-4 border-l-2 border-gray-300"
-          >
-            <div class="font-semibold">{{ np.label }}</div>
-            <div
-              *ngFor="let nsp of np.permissions"
-              class="grid grid-cols-3 gap-2"
-            >
-              <label
-                ><input type="checkbox" [(ngModel)]="nsp.canread" /> Read</label
-              >
-              <label
-                ><input type="checkbox" [(ngModel)]="nsp.canwrite" />
-                Write</label
-              >
-              <label
-                ><input type="checkbox" [(ngModel)]="nsp.canput" /> Put</label
-              >
-              <label
-                ><input type="checkbox" [(ngModel)]="nsp.candelete" />
-                Delete</label
-              >
-              <label
-                ><input type="checkbox" [(ngModel)]="nsp.isvisible" />
-                Visible</label
-              >
-              <label
-                ><input type="checkbox" [(ngModel)]="nsp.ishidden" />
-                Hidden</label
-              >
-              <label
-                ><input type="checkbox" [(ngModel)]="nsp.isrestricted" />
-                Restricted</label
-              >
+    <!-- Right panel: Permissions -->
+    <div class="col-span-9 grid grid-cols-1 gap-4">
+      <div class="rounded-lg shadow bg-white animate-pulse">
+        <!-- Header -->
+        <div class="h-10 w-1/3 bg-gray-300 rounded-t-lg"></div>
+        <div class="p-4 space-y-4">
+          <!-- Main Permission skeletons -->
+          <div class="space-y-2">
+            <div class="h-4 w-1/4 bg-gray-200 rounded"></div>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="h-6 bg-gray-200 rounded"></div>
+              <div class="h-6 bg-gray-200 rounded"></div>
+              <div class="h-6 bg-gray-200 rounded"></div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> -->
 
-<!-- //------------------------------//
-<div class="p-6 grid grid-cols-12 gap-6">
-  <div class="col-span-3">
-    <div class="bg-white rounded-lg shadow p-4 mb-4">
-      <h3 class="font-bold mb-2">Filter Users</h3>
-
-      <div class="mb-4">
-        <label>Company</label>
-        <select
-          [(ngModel)]="selectedCompanyId"
-          (change)="onCompanyChange()"
-          class="w-full border rounded p-2"
-        >
-          <option [ngValue]="null">All</option>
-          <option *ngFor="let c of companies" [ngValue]="c.id">
-            {{ c.name }}
-          </option>
-        </select>
-      </div>
-
-      <div class="mb-4">
-        <label>Role</label>
-        <select
-          [(ngModel)]="selectedRoleId"
-          (change)="onRoleChange()"
-          class="w-full border rounded p-2"
-        >
-          <option [ngValue]="null">All</option>
-          <option *ngFor="let r of roles" [ngValue]="r.id">{{ r.name }}</option>
-        </select>
-      </div>
-
-      <div class="mb-4">
-        <label>User</label>
-        <select
-          [(ngModel)]="selectedUserId"
-          class="w-full border rounded p-2"
-          (change)="updateFilteredUsers()"
-        >
-          <option [ngValue]="null">Select User</option>
-          <option *ngFor="let u of filteredUsers" [ngValue]="u.id">
-            {{ u.name }}
-          </option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-span-9 grid grid-cols-2 gap-4 auto-rows-auto">
-    <div
-      *ngFor="let group of currentPermissions"
-      class="rounded-lg shadow bg-white h-auto"
-    >
-      <div
-        class="p-3 text-white font-bold rounded-t-lg"
-        [ngClass]="group.color"
-      >
-        {{ group.title }}
-      </div>
-
-      <div class="p-4 space-y-4">
-        <div *ngFor="let perm of group.permissions" class="pb-2">
-          <div class="font-semibold mb-2">{{ perm.label }}</div>
-          <div class="grid grid-cols-3 gap-2">
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.canread" /> Read</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.canwrite" />
-              Write</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.canput" /> Put</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.candelete" />
-              Delete</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.isvisible" />
-              Visible</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.ishidden" />
-              Hidden</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="perm.isrestricted" />
-              Restricted</label
-            >
-          </div>
-        </div>
-
-        <div
-          *ngFor="let sub of group.subPermissions"
-          class="pl-4 border-l-2 border-gray-200"
-        >
-          <div class="font-semibold">{{ sub.label }}</div>
-
-          <div
-            *ngFor="let sp of sub.permissions"
-            class="grid grid-cols-3 gap-2"
-          >
-            <label
-              ><input type="checkbox" [(ngModel)]="sp.canread" /> Read</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="sp.canwrite" /> Write</label
-            >
-            <label><input type="checkbox" [(ngModel)]="sp.canput" /> Put</label>
-            <label
-              ><input type="checkbox" [(ngModel)]="sp.candelete" />
-              Delete</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="sp.isvisible" />
-              Visible</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="sp.ishidden" /> Hidden</label
-            >
-            <label
-              ><input type="checkbox" [(ngModel)]="sp.isrestricted" />
-              Restricted</label
-            >
+          <!-- Sub Permissions skeleton -->
+          <div class="pl-4 border-l-2 border-gray-200 mt-4 space-y-2">
+            <div class="h-4 w-1/5 bg-gray-200 rounded"></div>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="h-6 bg-gray-200 rounded"></div>
+              <div class="h-6 bg-gray-200 rounded"></div>
+              <div class="h-6 bg-gray-200 rounded"></div>
+            </div>
           </div>
 
-          <div
-            *ngFor="let np of sub.nestedPermissions"
-            class="pl-4 border-l-2 border-gray-300"
-          >
-            <div class="font-semibold">{{ np.label }}</div>
-            <div
-              *ngFor="let nsp of np.permissions"
-              class="grid grid-cols-3 gap-2"
-            >
-              <label
-                ><input type="checkbox" [(ngModel)]="nsp.canread" /> Read</label
-              >
-              <label
-                ><input type="checkbox" [(ngModel)]="nsp.canwrite" />
-                Write</label
-              >
-              <label
-                ><input type="checkbox" [(ngModel)]="nsp.canput" /> Put</label
-              >
-              <label
-                ><input type="checkbox" [(ngModel)]="nsp.candelete" />
-                Delete</label
-              >
-              <label
-                ><input type="checkbox" [(ngModel)]="nsp.isvisible" />
-                Visible</label
-              >
-              <label
-                ><input type="checkbox" [(ngModel)]="nsp.ishidden" />
-                Hidden</label
-              >
-              <label
-                ><input type="checkbox" [(ngModel)]="nsp.isrestricted" />
-                Restricted</label
-              >
+          <!-- Nested Permissions skeleton -->
+          <div class="pl-8 border-l-2 border-gray-300 mt-4 space-y-2">
+            <div class="h-4 w-1/6 bg-gray-200 rounded"></div>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="h-6 bg-gray-200 rounded"></div>
+              <div class="h-6 bg-gray-200 rounded"></div>
+              <div class="h-6 bg-gray-200 rounded"></div>
             </div>
           </div>
         </div>
@@ -413,265 +58,128 @@
   </div>
 </div>
 
-//----------------------------// -->
-<!-- //------------------------------//
-<div class="p-6 grid grid-cols-12 gap-6">
+<ng-template #content>
+  <div class="p-6 grid grid-cols-12 gap-6">
+    <!-- Left panel: Filters -->
+    <div class="col-span-3">
+      <div class="bg-white rounded-lg shadow p-4 mb-4">
+        <h3 class="font-bold mb-4">Filter Users</h3>
 
-  <div class="col-span-3">
-    <div class="bg-white rounded-lg shadow p-4 mb-4">
-      <h3 class="font-bold mb-4">Filter Users</h3>
+        <!-- Company -->
+        <div class="mb-4">
+          <label>Company</label>
+          <select
+            [(ngModel)]="selectedCompanyId"
+            (change)="onCompanySelect()"
+            class="w-full border rounded p-2"
+          >
+            <option [ngValue]="null">All</option>
+            <option *ngFor="let c of companies" [ngValue]="c.id">
+              {{ c.name }}
+            </option>
+          </select>
+        </div>
 
+        <!-- Role -->
+        <div class="mb-4">
+          <label>Role</label>
+          <select
+            [(ngModel)]="selectedRoleId"
+            (change)="onRoleSelect()"
+            class="w-full border rounded p-2"
+          >
+            <option [ngValue]="null">All</option>
+            <option *ngFor="let r of availableRoles" [ngValue]="r.id">
+              {{ r.name }}
+            </option>
+          </select>
+        </div>
 
-      <div class="mb-4">
-        <label>Company</label>
-        <select
-          [(ngModel)]="selectedCompanyId"
-          (change)="onCompanySelect()"
-          class="w-full border rounded p-2"
-        >
-          <option [ngValue]="null">All</option>
-          <option *ngFor="let c of companies" [ngValue]="c.id">
-            {{ c.name }}
-          </option>
-        </select>
-      </div>
+        <!-- User -->
+        <div class="mb-4">
+          <label>User</label>
+          <select
+            [(ngModel)]="selectedUserId"
+            (change)="onUserSelect()"
+            class="w-full border rounded p-2"
+          >
+            <option [ngValue]="null">Select User</option>
+            <option *ngFor="let u of availableUsers" [ngValue]="u.id">
+              {{ u.name }}
+            </option>
+          </select>
+        </div>
 
+        <!-- Main Module -->
+        <div class="mb-4">
+          <label>Main Module</label>
+          <select
+            [(ngModel)]="selectedMainModule"
+            (change)="onMainModuleSelect()"
+            class="w-full border rounded p-2"
+          >
+            <option [ngValue]="null">Select Main Module</option>
+            <option *ngFor="let m of availableMainModules" [ngValue]="m">
+              {{ m.title }}
+            </option>
+          </select>
+        </div>
 
-      <div class="mb-4">
-        <label>Role</label>
-        <select
-          [(ngModel)]="selectedRoleId"
-          (change)="onRoleSelect()"
-          class="w-full border rounded p-2"
-        >
-          <option [ngValue]="null">All</option>
-          <option *ngFor="let r of availableRoles" [ngValue]="r.id">
-            {{ r.name }}
-          </option>
-        </select>
-      </div>
+        <!-- Sub Module -->
+        <div class="mb-4">
+          <label>Sub Module</label>
+          <select
+            [(ngModel)]="selectedSubModule"
+            (change)="onSubModuleSelect()"
+            class="w-full border rounded p-2"
+          >
+            <option [ngValue]="null">Select Sub Module</option>
+            <option *ngFor="let s of availableSubModules" [ngValue]="s">
+              {{ s.option }}
+            </option>
+          </select>
+        </div>
 
-
-      <div class="mb-4">
-        <label>User</label>
-        <select
-          [(ngModel)]="selectedUserId"
-          (change)="onUserSelect()"
-          class="w-full border rounded p-2"
-        >
-          <option [ngValue]="null">Select User</option>
-          <option *ngFor="let u of availableUsers" [ngValue]="u.id">
-            {{ u.name }}
-          </option>
-        </select>
-      </div>
-
-
-      <div class="mb-4">
-        <label>Main Module</label>
-        <select
-          [(ngModel)]="selectedMainModule"
-          (change)="onMainModuleSelect()"
-          class="w-full border rounded p-2"
-        >
-          <option [ngValue]="null">Select Main Module</option>
-          <option *ngFor="let m of availableMainModules" [ngValue]="m">
-            {{ m.title }}
-          </option>
-        </select>
-      </div>
-
-
-      <div class="mb-4">
-        <label>Sub Module</label>
-        <select
-          [(ngModel)]="selectedSubModule"
-          (change)="onSubModuleSelect()"
-          class="w-full border rounded p-2"
-        >
-          <option [ngValue]="null">Select Sub Module</option>
-          <option *ngFor="let s of availableSubModules" [ngValue]="s">
-            {{ s.option }}
-          </option>
-        </select>
-      </div>
-
-
-      <div class="mb-4">
-        <label>Nested Module</label>
-        <select
-          [(ngModel)]="selectedNestedModule"
-          class="w-full border rounded p-2"
-        >
-          <option [ngValue]="null">Select Nested Module</option>
-          <option *ngFor="let n of availableNestedModules" [ngValue]="n">
-            {{ n.option }}
-          </option>
-        </select>
+        <!-- Nested Module -->
+        <div class="mb-4">
+          <label>Nested Module</label>
+          <select
+            [(ngModel)]="selectedNestedModule"
+            class="w-full border rounded p-2"
+          >
+            <option [ngValue]="null">Select Nested Module</option>
+            <option *ngFor="let n of availableNestedModules" [ngValue]="n">
+              {{ n.option }}
+            </option>
+          </select>
+        </div>
       </div>
     </div>
-  </div>
 
-
-  <div class="col-span-9 grid grid-cols-1 gap-4">
-    <div *ngIf="selectedUserId">
-
-      <div *ngIf="selectedMainModule" class="rounded-lg shadow bg-white">
-        <div
-          class="p-3 text-white font-bold rounded-t-lg"
-          [ngClass]="selectedMainModule.color"
-        >
-          {{ selectedMainModule.title }}
-        </div>
-        <div class="p-4">
-
-          <div *ngFor="let perm of selectedMainModule.permissions" class="pb-2">
-            <div class="font-semibold mb-2">{{ perm.label }}</div>
-            <div class="grid grid-cols-3 gap-2">
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.canread"
-                  (change)="onPermissionChange(selectedMainModule, 'main')"
-                />
-                Read</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.canwrite"
-                  (change)="onPermissionChange(selectedMainModule, 'main')"
-                />
-                Write</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.canput"
-                  (change)="onPermissionChange(selectedMainModule, 'main')"
-                />
-                Put</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.candelete"
-                  (change)="onPermissionChange(selectedMainModule, 'main')"
-                />
-                Delete</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.isvisible"
-                  (change)="onPermissionChange(selectedMainModule, 'main')"
-                />
-                Visible</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.ishidden"
-                  (change)="onPermissionChange(selectedMainModule, 'main')"
-                />
-                Hidden</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.isrestricted"
-                  (change)="onPermissionChange(selectedMainModule, 'main')"
-                />
-                Restricted</label
-              >
-            </div>
-          </div>
-
-
+    <!-- Right panel: Permissions -->
+    <div class="col-span-9 grid grid-cols-1 gap-4">
+      <div *ngIf="selectedUserId">
+        <!-- Main Module Permissions -->
+        <div *ngIf="selectedMainModule" class="rounded-lg shadow bg-white">
           <div
-            *ngIf="selectedSubModule"
-            class="pl-4 border-l-2 border-gray-200 mt-4"
+            class="p-3 text-white font-bold rounded-t-lg"
+            [ngClass]="selectedMainModule.color"
           >
-            <div class="font-semibold mb-2">{{ selectedSubModule.option }}</div>
+            {{ selectedMainModule.title }}
+          </div>
+          <div class="p-4">
+            <!-- Main Permissions -->
             <div
-              *ngFor="let perm of selectedSubModule.permissions"
-              class="grid grid-cols-3 gap-2"
+              *ngFor="let perm of selectedMainModule.permissions"
+              class="pb-2"
             >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.canread"
-                  (change)="onPermissionChange(selectedSubModule, 'sub')"
-                />
-                Read</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.canwrite"
-                  (change)="onPermissionChange(selectedSubModule, 'sub')"
-                />
-                Write</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.canput"
-                  (change)="onPermissionChange(selectedSubModule, 'sub')"
-                />
-                Put</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.candelete"
-                  (change)="onPermissionChange(selectedSubModule, 'sub')"
-                />
-                Delete</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.isvisible"
-                  (change)="onPermissionChange(selectedSubModule, 'sub')"
-                />
-                Visible</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.ishidden"
-                  (change)="onPermissionChange(selectedSubModule, 'sub')"
-                />
-                Hidden</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.isrestricted"
-                  (change)="onPermissionChange(selectedSubModule, 'sub')"
-                />
-                Restricted</label
-              >
-            </div>
-
-
-            <div
-              *ngIf="selectedNestedModule"
-              class="pl-4 border-l-2 border-gray-300 mt-4"
-            >
-              <div class="font-semibold mb-2">
-                {{ selectedNestedModule.option }}
-              </div>
-              <div
-                *ngFor="let perm of selectedNestedModule.permissions"
-                class="grid grid-cols-3 gap-2"
-              >
+              <div class="font-semibold mb-2">{{ perm.label }}</div>
+              <div class="grid grid-cols-3 gap-2">
                 <label
                   ><input
                     type="checkbox"
                     [(ngModel)]="perm.canread"
-                    (change)="onPermissionChange(selectedNestedModule, 'nested')"
+                    (change)="onPermissionChange('main')"
                   />
                   Read</label
                 >
@@ -679,7 +187,7 @@
                   ><input
                     type="checkbox"
                     [(ngModel)]="perm.canwrite"
-                    (change)="onPermissionChange(selectedNestedModule, 'nested')"
+                    (change)="onPermissionChange('main')"
                   />
                   Write</label
                 >
@@ -687,7 +195,7 @@
                   ><input
                     type="checkbox"
                     [(ngModel)]="perm.canput"
-                    (change)="onPermissionChange(selectedNestedModule, 'nested')"
+                    (change)="onPermissionChange('main')"
                   />
                   Put</label
                 >
@@ -695,7 +203,7 @@
                   ><input
                     type="checkbox"
                     [(ngModel)]="perm.candelete"
-                    (change)="onPermissionChange(selectedNestedModule, 'nested')"
+                    (change)="onPermissionChange('main')"
                   />
                   Delete</label
                 >
@@ -703,7 +211,7 @@
                   ><input
                     type="checkbox"
                     [(ngModel)]="perm.isvisible"
-                    (change)="onPermissionChange(selectedNestedModule, 'nested')"
+                    (change)="onPermissionChange('main')"
                   />
                   Visible</label
                 >
@@ -711,7 +219,7 @@
                   ><input
                     type="checkbox"
                     [(ngModel)]="perm.ishidden"
-                    (change)="onPermissionChange(selectedNestedModule, 'nested')"
+                    (change)="onPermissionChange('main')"
                   />
                   Hidden</label
                 >
@@ -719,276 +227,30 @@
                   ><input
                     type="checkbox"
                     [(ngModel)]="perm.isrestricted"
-                    (change)="onPermissionChange(selectedNestedModule, 'nested')"
+                    (change)="onPermissionChange('main')"
                   />
                   Restricted</label
                 >
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-//-------------------------------------// -->
-<div class="p-6 grid grid-cols-12 gap-6">
-  <!-- Left panel: Filters -->
-  <div class="col-span-3">
-    <div class="bg-white rounded-lg shadow p-4 mb-4">
-      <h3 class="font-bold mb-4">Filter Users</h3>
 
-      <!-- Company -->
-      <div class="mb-4">
-        <label>Company</label>
-        <select
-          [(ngModel)]="selectedCompanyId"
-          (change)="onCompanySelect()"
-          class="w-full border rounded p-2"
-        >
-          <option [ngValue]="null">All</option>
-          <option *ngFor="let c of companies" [ngValue]="c.id">
-            {{ c.name }}
-          </option>
-        </select>
-      </div>
-
-      <!-- Role -->
-      <div class="mb-4">
-        <label>Role</label>
-        <select
-          [(ngModel)]="selectedRoleId"
-          (change)="onRoleSelect()"
-          class="w-full border rounded p-2"
-        >
-          <option [ngValue]="null">All</option>
-          <option *ngFor="let r of availableRoles" [ngValue]="r.id">
-            {{ r.name }}
-          </option>
-        </select>
-      </div>
-
-      <!-- User -->
-      <div class="mb-4">
-        <label>User</label>
-        <select
-          [(ngModel)]="selectedUserId"
-          (change)="onUserSelect()"
-          class="w-full border rounded p-2"
-        >
-          <option [ngValue]="null">Select User</option>
-          <option *ngFor="let u of availableUsers" [ngValue]="u.id">
-            {{ u.name }}
-          </option>
-        </select>
-      </div>
-
-      <!-- Main Module -->
-      <div class="mb-4">
-        <label>Main Module</label>
-        <select
-          [(ngModel)]="selectedMainModule"
-          (change)="onMainModuleSelect()"
-          class="w-full border rounded p-2"
-        >
-          <option [ngValue]="null">Select Main Module</option>
-          <option *ngFor="let m of availableMainModules" [ngValue]="m">
-            {{ m.title }}
-          </option>
-        </select>
-      </div>
-
-      <!-- Sub Module -->
-      <div class="mb-4">
-        <label>Sub Module</label>
-        <select
-          [(ngModel)]="selectedSubModule"
-          (change)="onSubModuleSelect()"
-          class="w-full border rounded p-2"
-        >
-          <option [ngValue]="null">Select Sub Module</option>
-          <option *ngFor="let s of availableSubModules" [ngValue]="s">
-            {{ s.option }}
-          </option>
-        </select>
-      </div>
-
-      <!-- Nested Module -->
-      <div class="mb-4">
-        <label>Nested Module</label>
-        <select
-          [(ngModel)]="selectedNestedModule"
-          class="w-full border rounded p-2"
-        >
-          <option [ngValue]="null">Select Nested Module</option>
-          <option *ngFor="let n of availableNestedModules" [ngValue]="n">
-            {{ n.option }}
-          </option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <!-- Right panel: Permissions -->
-  <div class="col-span-9 grid grid-cols-1 gap-4">
-    <div *ngIf="selectedUserId">
-      <!-- Main Module Permissions -->
-      <div *ngIf="selectedMainModule" class="rounded-lg shadow bg-white">
-        <div
-          class="p-3 text-white font-bold rounded-t-lg"
-          [ngClass]="selectedMainModule.color"
-        >
-          {{ selectedMainModule.title }}
-        </div>
-        <div class="p-4">
-          <!-- Main Permissions -->
-          <div *ngFor="let perm of selectedMainModule.permissions" class="pb-2">
-            <div class="font-semibold mb-2">{{ perm.label }}</div>
-            <div class="grid grid-cols-3 gap-2">
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.canread"
-                  (change)="onPermissionChange('main')"
-                />
-                Read</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.canwrite"
-                  (change)="onPermissionChange('main')"
-                />
-                Write</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.canput"
-                  (change)="onPermissionChange('main')"
-                />
-                Put</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.candelete"
-                  (change)="onPermissionChange('main')"
-                />
-                Delete</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.isvisible"
-                  (change)="onPermissionChange('main')"
-                />
-                Visible</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.ishidden"
-                  (change)="onPermissionChange('main')"
-                />
-                Hidden</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.isrestricted"
-                  (change)="onPermissionChange('main')"
-                />
-                Restricted</label
-              >
-            </div>
-          </div>
-
-          <!-- Sub Module Permissions -->
-          <div
-            *ngIf="selectedSubModule"
-            class="pl-4 border-l-2 border-gray-200 mt-4"
-          >
-            <div class="font-semibold mb-2">{{ selectedSubModule.option }}</div>
+            <!-- Sub Module Permissions -->
             <div
-              *ngFor="let perm of selectedSubModule.permissions"
-              class="grid grid-cols-3 gap-2"
-            >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.canread"
-                  (change)="onPermissionChange('sub')"
-                />
-                Read</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.canwrite"
-                  (change)="onPermissionChange('sub')"
-                />
-                Write</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.canput"
-                  (change)="onPermissionChange('sub')"
-                />
-                Put</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.candelete"
-                  (change)="onPermissionChange('sub')"
-                />
-                Delete</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.isvisible"
-                  (change)="onPermissionChange('sub')"
-                />
-                Visible</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.ishidden"
-                  (change)="onPermissionChange('sub')"
-                />
-                Hidden</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  [(ngModel)]="perm.isrestricted"
-                  (change)="onPermissionChange('sub')"
-                />
-                Restricted</label
-              >
-            </div>
-
-            <!-- Nested Module Permissions -->
-            <div
-              *ngIf="selectedNestedModule"
-              class="pl-4 border-l-2 border-gray-300 mt-4"
+              *ngIf="selectedSubModule"
+              class="pl-4 border-l-2 border-gray-200 mt-4"
             >
               <div class="font-semibold mb-2">
-                {{ selectedNestedModule.option }}
+                {{ selectedSubModule.option }}
               </div>
               <div
-                *ngFor="let perm of selectedNestedModule.permissions"
+                *ngFor="let perm of selectedSubModule.permissions"
                 class="grid grid-cols-3 gap-2"
               >
                 <label
                   ><input
                     type="checkbox"
                     [(ngModel)]="perm.canread"
-                    (change)="onPermissionChange('nested')"
+                    (change)="onPermissionChange('sub')"
                   />
                   Read</label
                 >
@@ -996,7 +258,7 @@
                   ><input
                     type="checkbox"
                     [(ngModel)]="perm.canwrite"
-                    (change)="onPermissionChange('nested')"
+                    (change)="onPermissionChange('sub')"
                   />
                   Write</label
                 >
@@ -1004,7 +266,7 @@
                   ><input
                     type="checkbox"
                     [(ngModel)]="perm.canput"
-                    (change)="onPermissionChange('nested')"
+                    (change)="onPermissionChange('sub')"
                   />
                   Put</label
                 >
@@ -1012,7 +274,7 @@
                   ><input
                     type="checkbox"
                     [(ngModel)]="perm.candelete"
-                    (change)="onPermissionChange('nested')"
+                    (change)="onPermissionChange('sub')"
                   />
                   Delete</label
                 >
@@ -1020,7 +282,7 @@
                   ><input
                     type="checkbox"
                     [(ngModel)]="perm.isvisible"
-                    (change)="onPermissionChange('nested')"
+                    (change)="onPermissionChange('sub')"
                   />
                   Visible</label
                 >
@@ -1028,7 +290,7 @@
                   ><input
                     type="checkbox"
                     [(ngModel)]="perm.ishidden"
-                    (change)="onPermissionChange('nested')"
+                    (change)="onPermissionChange('sub')"
                   />
                   Hidden</label
                 >
@@ -1036,10 +298,81 @@
                   ><input
                     type="checkbox"
                     [(ngModel)]="perm.isrestricted"
-                    (change)="onPermissionChange('nested')"
+                    (change)="onPermissionChange('sub')"
                   />
                   Restricted</label
                 >
+              </div>
+
+              <!-- Nested Module Permissions -->
+              <div
+                *ngIf="selectedNestedModule"
+                class="pl-4 border-l-2 border-gray-300 mt-4"
+              >
+                <div class="font-semibold mb-2">
+                  {{ selectedNestedModule.option }}
+                </div>
+                <div
+                  *ngFor="let perm of selectedNestedModule.permissions"
+                  class="grid grid-cols-3 gap-2"
+                >
+                  <label
+                    ><input
+                      type="checkbox"
+                      [(ngModel)]="perm.canread"
+                      (change)="onPermissionChange('nested')"
+                    />
+                    Read</label
+                  >
+                  <label
+                    ><input
+                      type="checkbox"
+                      [(ngModel)]="perm.canwrite"
+                      (change)="onPermissionChange('nested')"
+                    />
+                    Write</label
+                  >
+                  <label
+                    ><input
+                      type="checkbox"
+                      [(ngModel)]="perm.canput"
+                      (change)="onPermissionChange('nested')"
+                    />
+                    Put</label
+                  >
+                  <label
+                    ><input
+                      type="checkbox"
+                      [(ngModel)]="perm.candelete"
+                      (change)="onPermissionChange('nested')"
+                    />
+                    Delete</label
+                  >
+                  <label
+                    ><input
+                      type="checkbox"
+                      [(ngModel)]="perm.isvisible"
+                      (change)="onPermissionChange('nested')"
+                    />
+                    Visible</label
+                  >
+                  <label
+                    ><input
+                      type="checkbox"
+                      [(ngModel)]="perm.ishidden"
+                      (change)="onPermissionChange('nested')"
+                    />
+                    Hidden</label
+                  >
+                  <label
+                    ><input
+                      type="checkbox"
+                      [(ngModel)]="perm.isrestricted"
+                      (change)="onPermissionChange('nested')"
+                    />
+                    Restricted</label
+                  >
+                </div>
               </div>
             </div>
           </div>
@@ -1047,4 +380,4 @@
       </div>
     </div>
   </div>
-</div>
+</ng-template>

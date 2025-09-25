@@ -39,3 +39,13 @@ select {
   appearance: none; /* Modern browsers */
   background: transparent; /* Prevent default background */
 }
+
+.snackbar-success {
+  background: #4caf50; /* green */
+  color: #fff;
+}
+
+.snackbar-error {
+  background: #f44336; /* red */
+  color: #fff;
+}
