@@ -28,10 +28,36 @@
 
         <button
           type="submit"
-          [disabled]="loginForm.invalid"
-          class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:opacity-50"
+          [disabled]="loginForm.invalid || isLoading"
+          (click)="onSubmit()"
+          class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2"
         >
-          Login
+          <!-- Spinner -->
+          <svg
+            *ngIf="isLoading"
+            class="animate-spin h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            ></path>
+          </svg>
+
+          <!-- Button Text -->
+          <span *ngIf="!isLoading">Login</span>
+          <span *ngIf="isLoading">Logging in...</span>
         </button>
 
         <p class="text-sm text-center mt-4">
