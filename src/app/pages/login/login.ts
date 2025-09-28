@@ -89,6 +89,7 @@ export class Login implements OnInit {
 
   onSubmit() {
     if (this.loginForm.valid) {
+      this.isLoading = true;
       const { email, password } = this.loginForm.value;
       const dto = { email, password };
       this.auth.login(dto).subscribe({
@@ -107,7 +108,7 @@ export class Login implements OnInit {
             response.userId
             // response.organizationId
           );
-
+          this.isLoading = false;
           // Route based on role
           switch (response.roleId) {
             case 1:
@@ -128,6 +129,7 @@ export class Login implements OnInit {
         },
         error: (error: any) => {
           console.error('Login failed:', error);
+          this.isLoading = false;
           alert('Invalid credentials or server error.');
         },
       });
