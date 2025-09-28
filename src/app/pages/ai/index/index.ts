@@ -92,13 +92,27 @@ export class Index implements OnInit {
     const userMessage = this.message;
     this.message = '';
 
+    // this.http
+    //   .get<any>(`${this.aiUrl}/ai/general?q=${encodeURIComponent(userMessage)}`)
+    //   .subscribe({
+    //     next: (res) => {
+    //       this.messages.push({ sender: 'ai', text: res.response });
+    //     },
+    //     error: () => {
+    //       this.messages.push({
+    //         sender: 'ai',
+    //         text: '⚠️ Error connecting to AI API',
+    //       });
+    //     },
+    //   });
     this.http
-      .get<any>(`${this.aiUrl}/ai/general?q=${encodeURIComponent(userMessage)}`)
+      .post<any>(`${this.aiUrl}/ai/general`, { query: userMessage })
       .subscribe({
         next: (res) => {
           this.messages.push({ sender: 'ai', text: res.response });
         },
-        error: () => {
+        error: (err) => {
+          console.error(err);
           this.messages.push({
             sender: 'ai',
             text: '⚠️ Error connecting to AI API',
