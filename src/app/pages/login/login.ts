@@ -108,7 +108,7 @@ export class Login implements OnInit {
             response.userId
             // response.organizationId
           );
-          this.isLoading = false;
+
           // Route based on role
           switch (response.roleId) {
             case 1:
@@ -126,6 +126,7 @@ export class Login implements OnInit {
             default:
               alert('Unknown role!');
           }
+          this.isLoading = false;
         },
         error: (error: any) => {
           console.error('Login failed:', error);
