@@ -145,6 +145,7 @@
           <label>Nested Module</label>
           <select
             [(ngModel)]="selectedNestedModule"
+            (change)="onNestedModuleSelect()"
             class="w-full border rounded p-2"
           >
             <option [ngValue]="null">Select Nested Module</option>

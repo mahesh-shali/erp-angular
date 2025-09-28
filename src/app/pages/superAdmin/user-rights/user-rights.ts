@@ -117,38 +117,111 @@ export class UserRights implements OnInit {
     };
   }
 
+  // private initializePermissions() {
+  //   if (
+  //     this.selectedMainModule &&
+  //     !this.selectedMainModule.permissions?.length
+  //   ) {
+  //     this.selectedMainModule.permissions = [
+  //       this.createDefaultPermissionForModule(
+  //         this.selectedMainModule.id,
+  //         this.selectedMainModule.title
+  //       ),
+  //     ];
+  //   }
+
+  //   if (this.selectedSubModule && !this.selectedSubModule.permissions?.length) {
+  //     this.selectedSubModule.permissions = [
+  //       this.createDefaultPermissionForModule(
+  //         this.selectedSubModule.id,
+  //         this.selectedSubModule.option
+  //       ),
+  //     ];
+  //   }
+
+  //   if (
+  //     this.selectedNestedModule &&
+  //     !this.selectedNestedModule.permissions?.length
+  //   ) {
+  //     this.selectedNestedModule.permissions = [
+  //       this.createDefaultPermissionForModule(
+  //         this.selectedNestedModule.id,
+  //         this.selectedNestedModule.option
+  //       ),
+  //     ];
+  //   }
+  // }
+  // private initializePermissions() {
+  //   if (this.selectedMainModule) {
+  //     this.selectedMainModule.permissions ??= [];
+  //     if (this.selectedMainModule.permissions.length === 0) {
+  //       this.selectedMainModule.permissions.push(
+  //         this.createDefaultPermissionForModule(
+  //           this.selectedMainModule.id,
+  //           this.selectedMainModule.title
+  //         )
+  //       );
+  //     }
+  //   }
+
+  //   if (this.selectedSubModule) {
+  //     this.selectedSubModule.permissions ??= [];
+  //     if (this.selectedSubModule.permissions.length === 0) {
+  //       this.selectedSubModule.permissions.push(
+  //         this.createDefaultPermissionForModule(
+  //           this.selectedSubModule.id,
+  //           this.selectedSubModule.option
+  //         )
+  //       );
+  //     }
+  //   }
+
+  //   if (this.selectedNestedModule) {
+  //     this.selectedNestedModule.permissions ??= [];
+  //     if (this.selectedNestedModule.permissions.length === 0) {
+  //       this.selectedNestedModule.permissions.push(
+  //         this.createDefaultPermissionForModule(
+  //           this.selectedNestedModule.id,
+  //           this.selectedNestedModule.option
+  //         )
+  //       );
+  //     }
+  //   }
+  // }
+  private normalizePermissions(module: any) {
+    if (!module.permissions || module.permissions.length === 0) {
+      module.permissions = [
+        this.createDefaultPermissionForModule(
+          module.id,
+          module.label ?? module.option ?? module.title ?? 'Unnamed'
+        ),
+      ];
+    }
+
+    if (module.subPermissions) {
+      module.subPermissions.forEach((sub: any) =>
+        this.normalizePermissions(sub)
+      );
+    }
+
+    if (module.nestedPermissions) {
+      module.nestedPermissions.forEach((nested: any) =>
+        this.normalizePermissions(nested)
+      );
+    }
+  }
+
   private initializePermissions() {
-    if (
-      this.selectedMainModule &&
-      !this.selectedMainModule.permissions?.length
-    ) {
-      this.selectedMainModule.permissions = [
-        this.createDefaultPermissionForModule(
-          this.selectedMainModule.id,
-          this.selectedMainModule.title
-        ),
-      ];
+    if (this.selectedMainModule) {
+      this.normalizePermissions(this.selectedMainModule);
     }
 
-    if (this.selectedSubModule && !this.selectedSubModule.permissions?.length) {
-      this.selectedSubModule.permissions = [
-        this.createDefaultPermissionForModule(
-          this.selectedSubModule.id,
-          this.selectedSubModule.option
-        ),
-      ];
+    if (this.selectedSubModule) {
+      this.normalizePermissions(this.selectedSubModule);
     }
 
-    if (
-      this.selectedNestedModule &&
-      !this.selectedNestedModule.permissions?.length
-    ) {
-      this.selectedNestedModule.permissions = [
-        this.createDefaultPermissionForModule(
-          this.selectedNestedModule.id,
-          this.selectedNestedModule.option
-        ),
-      ];
+    if (this.selectedNestedModule) {
+      this.normalizePermissions(this.selectedNestedModule);
     }
   }
 
@@ -256,6 +329,7 @@ export class UserRights implements OnInit {
                   })),
                 })
               );
+              permissions.forEach((pg) => this.normalizePermissions(pg));
 
               return {
                 ...u,
@@ -263,6 +337,7 @@ export class UserRights implements OnInit {
                 permissions,
               };
             });
+            this.isLoading = false;
           } catch (err) {
             console.error('Error processing permissions:', err);
           } finally {
@@ -360,14 +435,71 @@ export class UserRights implements OnInit {
       this.selectedSubModule = null;
       return;
     }
+    // Find the actual sub module in the selected user's permissions from API
+    const user = this.users.find((u) => u.id === this.selectedUserId);
+    if (!user) return;
+
+    const mainModule = user.permissions?.find(
+      (m) => m.id === this.selectedMainModule?.id
+    );
+    if (!mainModule) return;
+
+    const subModule = mainModule.subPermissions?.find(
+      (s) => s.id === this.selectedSubModule?.id
+    );
+    if (!subModule) {
+      this.availableNestedModules = [];
+      this.selectedNestedModule = null;
+      alert('Cannot open nested modules: Sub module not found in API.');
+      return;
+    }
+
+    // Only proceed if sub module has permissions from API
+    if (!subModule.permissions?.length) {
+      this.availableNestedModules = [];
+      this.selectedNestedModule = null;
+      alert(
+        'Cannot open nested modules: No permissions in this sub module from API.'
+      );
+      return;
+    }
+
+    // Sub module has permissions, show nested modules
+    this.availableNestedModules = subModule.nestedPermissions || [];
+    this.selectedSubModuleId = subModule.id;
+
     this.availableNestedModules =
       this.selectedSubModule?.nestedPermissions || [];
     this.selectedSubModuleId = this.selectedSubModule?.id ?? null;
-    this.initializePermissions();
+    //this.initializePermissions();
   }
 
   onNestedModuleSelect() {
     if (!this.selectedNestedModule) return;
+    const user = this.users.find((u) => u.id === this.selectedUserId);
+    if (!user) return;
+
+    const mainModule = user.permissions?.find(
+      (m) => m.id === this.selectedMainModule?.id
+    );
+    if (!mainModule) return;
+
+    const subModule = mainModule.subPermissions?.find(
+      (s) => s.id === this.selectedSubModule?.id
+    );
+    if (!subModule) return;
+
+    // Only proceed if nestedPermissions exist in the API response
+    if (!subModule.nestedPermissions?.length) {
+      alert('Cannot open nested permissions: No permissions from API.');
+      this.selectedNestedModule = null;
+      this.availableNestedModules = [];
+      return;
+    }
+
+    // Proceed normally
+    this.availableNestedModules = subModule.nestedPermissions;
+    this.initializePermissions();
     this.initializePermissions();
   }
 
@@ -494,6 +626,140 @@ export class UserRights implements OnInit {
   //     });
   // }
 
+  // onPermissionChange(level: 'main' | 'sub' | 'nested') {
+  //   if (!this.selectedUserId || !this.selectedRoleId || !this.selectedCompanyId)
+  //     return;
+
+  //   try {
+  //     const payloads: any[] = [];
+
+  //     // Main
+  //     if (level === 'main' && this.selectedMainModule) {
+  //       if (this.selectedMainModule.permissions.length === 0) {
+  //         payloads.push({
+  //           orgId: this.selectedCompanyId,
+  //           userId: this.selectedUserId,
+  //           roleId: this.selectedRoleId,
+  //           SidenavbarId: this.selectedMainModule.id,
+  //           canRead: false,
+  //           canWrite: false,
+  //           canPut: false,
+  //           canDelete: false,
+  //           isVisible: false,
+  //           isHidden: false,
+  //           isRestricted: false,
+  //         });
+  //       } else {
+  //         this.selectedMainModule.permissions.forEach((perm) => {
+  //           payloads.push({
+  //             orgId: this.selectedCompanyId,
+  //             userId: this.selectedUserId,
+  //             roleId: this.selectedRoleId,
+  //             SidenavbarId: perm.id,
+  //             canRead: perm.canread,
+  //             canWrite: perm.canwrite,
+  //             canPut: perm.canput,
+  //             canDelete: perm.candelete,
+  //             isVisible: perm.isvisible,
+  //             isHidden: perm.ishidden,
+  //             isRestricted: perm.isrestricted,
+  //           });
+  //         });
+  //       }
+  //     }
+
+  //     // Sub
+  //     if (level === 'sub' && this.selectedSubModule) {
+  //       if (this.selectedSubModule.permissions.length === 0) {
+  //         payloads.push({
+  //           orgId: this.selectedCompanyId,
+  //           userId: this.selectedUserId,
+  //           roleId: this.selectedRoleId,
+  //           SubSidenavbarId: this.selectedSubModule.id,
+  //           canRead: false,
+  //           canWrite: false,
+  //           canPut: false,
+  //           canDelete: false,
+  //           isVisible: false,
+  //           isHidden: false,
+  //           isRestricted: false,
+  //         });
+  //       } else {
+  //         this.selectedSubModule.permissions.forEach((perm) => {
+  //           payloads.push({
+  //             orgId: this.selectedCompanyId,
+  //             userId: this.selectedUserId,
+  //             roleId: this.selectedRoleId,
+  //             SubSidenavbarId: perm.id,
+  //             canRead: perm.canread,
+  //             canWrite: perm.canwrite,
+  //             canPut: perm.canput,
+  //             canDelete: perm.candelete,
+  //             isVisible: perm.isvisible,
+  //             isHidden: perm.ishidden,
+  //             isRestricted: perm.isrestricted,
+  //           });
+  //         });
+  //       }
+  //     }
+
+  //     // Nested
+  //     if (level === 'nested' && this.selectedNestedModule) {
+  //       if (this.selectedNestedModule.permissions.length === 0) {
+  //         payloads.push({
+  //           orgId: this.selectedCompanyId,
+  //           userId: this.selectedUserId,
+  //           roleId: this.selectedRoleId,
+  //           NestSidenavbarId: this.selectedNestedModule.id,
+  //           canRead: false,
+  //           canWrite: false,
+  //           canPut: false,
+  //           canDelete: false,
+  //           isVisible: false,
+  //           isHidden: false,
+  //           isRestricted: false,
+  //         });
+  //       } else {
+  //         this.selectedNestedModule.permissions.forEach((perm) => {
+  //           payloads.push({
+  //             orgId: this.selectedCompanyId,
+  //             userId: this.selectedUserId,
+  //             roleId: this.selectedRoleId,
+  //             NestSidenavbarId: perm.id,
+  //             canRead: perm.canread,
+  //             canWrite: perm.canwrite,
+  //             canPut: perm.canput,
+  //             canDelete: perm.candelete,
+  //             isVisible: perm.isvisible,
+  //             isHidden: perm.ishidden,
+  //             isRestricted: perm.isrestricted,
+  //           });
+  //         });
+  //       }
+  //     }
+
+  //     // API call
+  //     this.http
+  //       .post(`${this.apiUrl}/rights/save-rights`, payloads, {
+  //         withCredentials: true,
+  //       })
+  //       .subscribe({
+  //         next: () => {
+  //           console.log(`Permissions saved: ${level}`, payloads);
+  //           this.snackbar.showSuccess('Permissions updated successfully!');
+  //         },
+  //         error: (err) => {
+  //           console.error('Failed to save permissions', err);
+  //           this.snackbar.showError('Failed to update permissions. Try again.');
+  //         },
+  //       });
+  //   } catch (err) {
+  //     console.error('Unexpected error while preparing permissions', err);
+  //     this.snackbar.showError(
+  //       'Something went wrong while updating permissions.'
+  //     );
+  //   }
+  // }
   onPermissionChange(level: 'main' | 'sub' | 'nested') {
     if (!this.selectedUserId || !this.selectedRoleId || !this.selectedCompanyId)
       return;
@@ -501,9 +767,12 @@ export class UserRights implements OnInit {
     try {
       const payloads: any[] = [];
 
-      // Main
+      // ------------------ MAIN ------------------
       if (level === 'main' && this.selectedMainModule) {
-        if (this.selectedMainModule.permissions.length === 0) {
+        if (
+          !this.selectedMainModule.permissions ||
+          this.selectedMainModule.permissions.length === 0
+        ) {
           payloads.push({
             orgId: this.selectedCompanyId,
             userId: this.selectedUserId,
@@ -536,91 +805,108 @@ export class UserRights implements OnInit {
         }
       }
 
-      // Sub
+      // ------------------ SUB ------------------
       if (level === 'sub' && this.selectedSubModule) {
-        if (this.selectedSubModule.permissions.length === 0) {
-          payloads.push({
-            orgId: this.selectedCompanyId,
-            userId: this.selectedUserId,
-            roleId: this.selectedRoleId,
-            SubSidenavbarId: this.selectedSubModule.id,
-            canRead: false,
-            canWrite: false,
-            canPut: false,
-            canDelete: false,
-            isVisible: false,
-            isHidden: false,
-            isRestricted: false,
-          });
+        // Only proceed if MainPermissions exist
+        if (!this.selectedMainModule?.permissions?.length) {
+          console.warn(
+            'Sub-permissions skipped: MainPermissions do not exist.'
+          );
         } else {
-          this.selectedSubModule.permissions.forEach((perm) => {
+          if (!this.selectedSubModule.permissions?.length) {
             payloads.push({
               orgId: this.selectedCompanyId,
               userId: this.selectedUserId,
               roleId: this.selectedRoleId,
-              SubSidenavbarId: perm.id,
-              canRead: perm.canread,
-              canWrite: perm.canwrite,
-              canPut: perm.canput,
-              canDelete: perm.candelete,
-              isVisible: perm.isvisible,
-              isHidden: perm.ishidden,
-              isRestricted: perm.isrestricted,
+              SubSidenavbarId: this.selectedSubModule.id,
+              canRead: false,
+              canWrite: false,
+              canPut: false,
+              canDelete: false,
+              isVisible: false,
+              isHidden: false,
+              isRestricted: false,
             });
-          });
+          } else {
+            this.selectedSubModule.permissions.forEach((perm) => {
+              payloads.push({
+                orgId: this.selectedCompanyId,
+                userId: this.selectedUserId,
+                roleId: this.selectedRoleId,
+                SubSidenavbarId: perm.id,
+                canRead: perm.canread,
+                canWrite: perm.canwrite,
+                canPut: perm.canput,
+                canDelete: perm.candelete,
+                isVisible: perm.isvisible,
+                isHidden: perm.ishidden,
+                isRestricted: perm.isrestricted,
+              });
+            });
+          }
         }
       }
 
-      // Nested
+      // ------------------ NESTED ------------------
       if (level === 'nested' && this.selectedNestedModule) {
-        if (this.selectedNestedModule.permissions.length === 0) {
-          payloads.push({
-            orgId: this.selectedCompanyId,
-            userId: this.selectedUserId,
-            roleId: this.selectedRoleId,
-            NestSidenavbarId: this.selectedNestedModule.id,
-            canRead: false,
-            canWrite: false,
-            canPut: false,
-            canDelete: false,
-            isVisible: false,
-            isHidden: false,
-            isRestricted: false,
-          });
+        // Only proceed if SubPermissions exist
+        if (!this.selectedSubModule?.permissions?.length) {
+          console.warn(
+            'Nested-permissions skipped: SubPermissions do not exist.'
+          );
         } else {
-          this.selectedNestedModule.permissions.forEach((perm) => {
+          if (!this.selectedNestedModule.permissions?.length) {
             payloads.push({
               orgId: this.selectedCompanyId,
               userId: this.selectedUserId,
               roleId: this.selectedRoleId,
-              NestSidenavbarId: perm.id,
-              canRead: perm.canread,
-              canWrite: perm.canwrite,
-              canPut: perm.canput,
-              canDelete: perm.candelete,
-              isVisible: perm.isvisible,
-              isHidden: perm.ishidden,
-              isRestricted: perm.isrestricted,
+              NestSidenavbarId: this.selectedNestedModule.id,
+              canRead: false,
+              canWrite: false,
+              canPut: false,
+              canDelete: false,
+              isVisible: false,
+              isHidden: false,
+              isRestricted: false,
             });
-          });
+          } else {
+            this.selectedNestedModule.permissions.forEach((perm) => {
+              payloads.push({
+                orgId: this.selectedCompanyId,
+                userId: this.selectedUserId,
+                roleId: this.selectedRoleId,
+                NestSidenavbarId: perm.id,
+                canRead: perm.canread,
+                canWrite: perm.canwrite,
+                canPut: perm.canput,
+                canDelete: perm.candelete,
+                isVisible: perm.isvisible,
+                isHidden: perm.ishidden,
+                isRestricted: perm.isrestricted,
+              });
+            });
+          }
         }
       }
 
-      // API call
-      this.http
-        .post(`${this.apiUrl}/rights/save-rights`, payloads, {
-          withCredentials: true,
-        })
-        .subscribe({
-          next: () => {
-            console.log(`Permissions saved: ${level}`, payloads);
-            this.snackbar.showSuccess('Permissions updated successfully!');
-          },
-          error: (err) => {
-            console.error('Failed to save permissions', err);
-            this.snackbar.showError('Failed to update permissions. Try again.');
-          },
-        });
+      // ------------------ API CALL ------------------
+      if (payloads.length) {
+        this.http
+          .post(`${this.apiUrl}/rights/save-rights`, payloads, {
+            withCredentials: true,
+          })
+          .subscribe({
+            next: () => {
+              this.snackbar.showSuccess('Permissions updated successfully!');
+            },
+            error: (err) => {
+              console.error('Failed to save permissions', err);
+              this.snackbar.showError(
+                'Failed to update permissions. Try again.'
+              );
+            },
+          });
+      }
     } catch (err) {
       console.error('Unexpected error while preparing permissions', err);
       this.snackbar.showError(

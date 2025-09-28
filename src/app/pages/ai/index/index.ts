@@ -21,8 +21,6 @@ export class Index implements OnInit {
   messages: { sender: 'user' | 'ai'; text: string }[] = [];
   selectedPlan: { name: string; amount: number } | null = null;
 
-  
-
   paymentOptions = [
     { name: 'Basic', amount: 1000 * 100 },
     { name: 'Standard', amount: 2000 * 100 },
@@ -95,7 +93,7 @@ export class Index implements OnInit {
     this.message = '';
 
     this.http
-      .get<any>(`${this.aiUrl}/ai/ask?q=${encodeURIComponent(userMessage)}`)
+      .get<any>(`${this.aiUrl}/ai/general?q=${encodeURIComponent(userMessage)}`)
       .subscribe({
         next: (res) => {
           this.messages.push({ sender: 'ai', text: res.response });
