@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.html',
-  styleUrls: ['./login.scss'],
+  styleUrl: './login.scss',
 })
 export class Login implements OnInit {
   loginForm: FormGroup;
