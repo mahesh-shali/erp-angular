@@ -8,10 +8,11 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './not-found.html',
-  styleUrl: './not-found.scss',
+  styleUrls: ['./not-found.scss'],
 })
 export class NotFound implements OnInit {
   lastLocation: string = '';
+
   constructor(private router: Router) {}
 
   goHome() {

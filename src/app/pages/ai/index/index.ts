@@ -20,6 +20,7 @@ export class Index implements OnInit {
   isPaid = false;
   messages: { sender: 'user' | 'ai'; text: string }[] = [];
   selectedPlan: { name: string; amount: number } | null = null;
+  loading = true;
 
   paymentOptions = [
     { name: 'Basic', amount: 1000 * 100 },
@@ -37,12 +38,24 @@ export class Index implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.paymentService.checkPaymentStatus(this.userId).subscribe((res) => {
-      this.isPaid = res.isPaid;
-      if (!this.isPaid) {
-        this.started = true;
+    // this.paymentService.checkPaymentStatus(this.userId).subscribe((res) => {
+    //   this.isPaid = res.isPaid;
+    //   if (!this.isPaid) {
+    //     this.started = true;
+    //     this.loading = false;
+    //   }
+    // });
+    this.paymentService.checkPaymentStatus(this.userId).subscribe(
+      (res) => {
+        this.isPaid = res.isPaid;
+        this.started = this.isPaid;
+        this.loading = false;
+      },
+      (error) => {
+        console.error('Error checking payment status', error);
+        this.loading = false;
       }
-    });
+    );
   }
 
   pay(amount: number) {

@@ -7,6 +7,8 @@ import {
 import { provideRouter } from '@angular/router';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgProgressModule } from '@ngx-progressbar/core';
+import { NgProgressHttpModule } from '@ngx-progressbar/http';
 
 import { ToastrModule, provideToastr } from 'ngx-toastr';
 
@@ -27,6 +29,10 @@ import { XsrfInterceptor } from './interceptors/xsrf.interceptor';
 export const appConfig: ApplicationConfig = {
   providers: [
     importProvidersFrom(BrowserAnimationsModule),
+    importProvidersFrom(NgProgressModule),
+    // importProvidersFrom(NgProgressModule),
+    // importProvidersFrom(NgProgressHttpModule),
+
     provideToastr({
       timeOut: 3000,
       positionClass: 'toast-top-right',

@@ -4,6 +4,7 @@ import {
   RouterModule,
   RouterOutlet,
   NavigationEnd,
+  NavigationStart,
 } from '@angular/router';
 import { Navbar } from './components/navbar/navbar';
 import { Sidenavbar } from './components/sidenavbar/sidenavbar';
@@ -15,9 +16,11 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { filter } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { ProgressConfigService } from './services/ProgressConfig.Service';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   imports: [
     NgIf,
     RouterOutlet,
@@ -29,9 +32,8 @@ import { environment } from 'src/environments/environment';
     MatIconModule,
     FormsModule,
   ],
-  standalone: true,
   templateUrl: './app.html',
-  styleUrl: './app.scss',
+  styleUrls: ['./app.scss'],
 })
 export class App implements OnInit {
   protected title = 'client';
@@ -44,18 +46,29 @@ export class App implements OnInit {
     public authService: AuthService,
     private sectionService: SectionService,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private progressService: ProgressConfigService
   ) {}
 
   ngOnInit(): void {
     const loginUrl = `${this.apiUrl}/auth/login`;
     this.http.get(`${loginUrl}`).subscribe();
 
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event: any) => {
+    // this.router.events
+    //   .pipe(filter((event) => event instanceof NavigationEnd))
+    //   .subscribe((event: any) => {
+    //     localStorage.setItem('lastRoute', event.urlAfterRedirects);
+    //   });
+    this.router.events.subscribe((event: any) => {
+      if (event instanceof NavigationStart) {
+        this.progressService.start();
+      }
+
+      if (event instanceof NavigationEnd) {
+        this.progressService.complete();
         localStorage.setItem('lastRoute', event.urlAfterRedirects);
-      });
+      }
+    });
 
     if (this.authService.isLoggedIn()) {
       const lastRoute = localStorage.getItem('lastRoute');
@@ -79,7 +92,7 @@ export class App implements OnInit {
 
   getMainMarginClass(): string {
     if (this.isHomePage()) return 'md:ml-0';
-    if (this.isDashboardPage()) return 'md:ml-56'; // sidenav only
+    if (this.isDashboardPage()) return 'md:ml-56';
     return this.showSubnav() ? 'md:ml-64' : 'md:ml-56';
   }
 
