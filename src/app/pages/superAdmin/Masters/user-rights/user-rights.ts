@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { SnackbarService } from '../../../services/snackbar.service';
+import { SnackbarService } from '../../../../services/snackbar.service';
 
 interface Permission {
   id: number;

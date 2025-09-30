@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SectionService } from '../../../services/auth';
-import { PermissionsService } from '../../../services/permissions.service';
-import { SidebarItem } from '../../../constants/constants';
+import { SectionService } from '../../../../services/auth';
+import { PermissionsService } from '../../../../services/permissions.service';
+import { SidebarItem } from '../../../../constants/constants';
 import { environment } from 'src/environments/environment';
 import { Subscription } from 'rxjs';
 
