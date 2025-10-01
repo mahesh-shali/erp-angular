@@ -232,13 +232,13 @@ export class Users implements OnInit {
       // MODIFY
       this.userService.saveUser(payload).subscribe({
         next: () => {
-          this.toastr.success('User updated successfully!', 'Success'); // Green toast
+          this.toastr.success('User updated successfully!', 'Success');
           this.resetUserForm();
           this.loadUsers();
         },
         error: (err) => {
           console.error(err);
-          this.toastr.error('Failed to update user.', 'Error'); // Red toast
+          this.toastr.error('Failed to update user.', 'Error');
         },
       });
     } else {
