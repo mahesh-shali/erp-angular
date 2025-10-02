@@ -4,7 +4,6 @@
       <div class="w-full h-full flex gap-4">
         <ng-container *ngIf="isLoadingCustomer; else userFormTemplate">
           <div class="w-full p-4 space-y-5">
-            <!-- Name Field -->
             <div>
               <div
                 class="h-4 w-16 bg-gray-300 rounded mb-2 animate-pulse"
@@ -12,7 +11,6 @@
               <div class="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
             </div>
 
-            <!-- Organization Field -->
             <div>
               <div
                 class="h-4 w-24 bg-gray-300 rounded mb-2 animate-pulse"
@@ -20,7 +18,6 @@
               <div class="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
             </div>
 
-            <!-- Email Field -->
             <div>
               <div
                 class="h-4 w-20 bg-gray-300 rounded mb-2 animate-pulse"
@@ -28,15 +25,12 @@
               <div class="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
             </div>
 
-            <!-- Buttons -->
             <div class="flex justify-end gap-3 mt-4">
               <div class="h-10 w-20 bg-gray-300 rounded animate-pulse"></div>
               <div class="h-10 w-20 bg-blue-300 rounded animate-pulse"></div>
             </div>
           </div>
         </ng-container>
-
-        <!-- 🔹 Actual Form -->
         <ng-template #userFormTemplate>
           <div
             class="flex flex-col w-full bg-white rounded-lg shadow-md p-6 h-full"
@@ -44,7 +38,6 @@
             <form
               class="space-y-5 w-full h-full p-4 relative flex flex-col justify-between"
             >
-              <!-- 🔹 Customer Fields -->
               <div class="grid grid-cols-2 gap-4">
                 <div>
                   <label
@@ -146,13 +139,12 @@
           </div>
         </ng-template>
 
-        <!-- 🔹 Sidebar -->
         <div
           class="bg-white rounded-lg shadow-md p-6 hidden md:flex md:flex-col md:w-1/4 md:h-full"
         >
-          <!-- Users container -->
+
           <div class="flex-1 overflow-auto">
-            <!-- Loading Skeleton -->
+
             <ng-container *ngIf="isLoadingCustomer; else customersList">
               <div
                 *ngFor="let s of [1,2,3,4,5]"
@@ -160,7 +152,7 @@
               ></div>
             </ng-container>
 
-            <!-- Customer List -->
+
             <ng-template #customersList>
               <div class="pt-2">
                 <ul>
@@ -171,11 +163,11 @@
               </div>
             </ng-template>
 
-            <!-- No Customers -->
+
             <ng-template #noCustomers>No Customer found.</ng-template>
           </div>
 
-          <!-- Search Box -->
+
           <div class="mt-2">
             <input
               type="text"
