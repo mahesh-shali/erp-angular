@@ -65,7 +65,6 @@
         </a>
       </li>
 
-      <!-- Login -->
       <li *ngIf="!auth.isLoggedIn() && !isLoginPage()">
         <a
           routerLink="/login"
@@ -77,7 +76,6 @@
         </a>
       </li>
 
-      <!-- Logout -->
       <li *ngIf="auth.isLoggedIn() && !isLoginPage()">
         <a (click)="logout()" class="cursor-pointer text-red-500"> Logout </a>
       </li>
