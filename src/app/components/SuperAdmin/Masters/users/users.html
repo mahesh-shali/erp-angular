@@ -2,7 +2,6 @@
   <div *ngIf="roleId === 1" class="w-full">
     <main class="flex-1 transition-all duration-300 w-full h-full">
       <div class="w-full h-full flex gap-4">
-        <!-- Form on the left -->
         <div class="bg-white rounded-lg shadow-md p-6 w-3/4 h-full">
           <div class="mb-4 flex gap-4">
             <label class="inline-flex items-center">
@@ -29,7 +28,6 @@
           <ng-container
             *ngIf="isLoadingUsers || isLoadingOrgs; else userFormTemplate"
           >
-            <!-- Form Skeleton -->
             <div
               *ngFor="let f of [1,2,3]"
               class="animate-pulse h-8 bg-gray-200 rounded mb-4"
