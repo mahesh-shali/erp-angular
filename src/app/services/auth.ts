@@ -43,7 +43,6 @@ export class AuthService {
   loginState$ = this.loginState.asObservable();
 
   constructor(private http: HttpClient, private storage: StorageService) {
-    // Initialize roleId from localStorage on service creation
     const storedRoleId = this.storage.get('roleId');
     const xsrfCookie = this.getCookie('XSRF-TOKEN');
     if (xsrfCookie) {
@@ -81,7 +80,6 @@ export class AuthService {
       .post<LoginResponse>(this.loginUrl, dto, { withCredentials: true })
       .pipe(
         tap((response: LoginResponse) => {
-          // Token is now stored in HttpOnly cookie by the server
           if (response.roleId !== null) {
             localStorage.setItem('roleId', response.roleId.toString());
             this._roleId.next(response.roleId);
@@ -94,7 +92,6 @@ export class AuthService {
             );
             this._organizationId.next(response.organizationId);
           } else {
-            // Clear or handle missing OrganizationId gracefully
             localStorage.removeItem('OrganizationId');
             this._organizationId.next(null);
           }
@@ -102,7 +99,6 @@ export class AuthService {
             localStorage.setItem('userId', response.userId.toString());
             this._userId.next(response.userId);
           } else {
-            // Clear or handle missing OrganizationId gracefully
             localStorage.removeItem('userId');
             this._userId.next(null);
           }
