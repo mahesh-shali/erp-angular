@@ -40,7 +40,6 @@ export class Enquiry implements OnInit {
   gridOptions: GridOptions = {};
 
   constructor() {
-    // Initialize gridOptions with proper binding
     this.gridOptions = {
       stopEditingWhenCellsLoseFocus: true,
       singleClickEdit: false,
