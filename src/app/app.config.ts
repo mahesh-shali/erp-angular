@@ -9,6 +9,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { NgProgressHttpModule } from '@ngx-progressbar/http';
+import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 
 import { ToastrModule, provideToastr } from 'ngx-toastr';
 
@@ -26,6 +27,7 @@ import {
 } from '@angular/platform-browser';
 import { XsrfInterceptor } from './interceptors/xsrf.interceptor';
 
+ModuleRegistry.registerModules([AllCommunityModule]);
 export const appConfig: ApplicationConfig = {
   providers: [
     importProvidersFrom(BrowserAnimationsModule),

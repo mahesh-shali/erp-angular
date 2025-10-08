@@ -1,0 +1,124 @@
+<div class="flex flex-wrap w-full h-full">
+  <div *ngIf="roleId === 1" class="w-full">
+    <main class="flex-1 transition-all duration-300 w-full h-full">
+      <div class="w-full h-full flex gap-4">
+        <ng-container *ngIf="isLoadingEnquiry; else enquiryFormTemplate">
+          <div class="w-full p-4 space-y-5">
+            <!-- Name Field -->
+            <div>
+              <div
+                class="h-4 w-16 bg-gray-300 rounded mb-2 animate-pulse"
+              ></div>
+              <div class="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
+            </div>
+
+            <!-- Organization Field -->
+            <div>
+              <div
+                class="h-4 w-24 bg-gray-300 rounded mb-2 animate-pulse"
+              ></div>
+              <div class="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
+            </div>
+
+            <!-- Email Field -->
+            <div>
+              <div
+                class="h-4 w-20 bg-gray-300 rounded mb-2 animate-pulse"
+              ></div>
+              <div class="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex justify-end gap-3 mt-4">
+              <div class="h-10 w-20 bg-gray-300 rounded animate-pulse"></div>
+              <div class="h-10 w-20 bg-blue-300 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- 🔹 Actual Form -->
+        <ng-template #enquiryFormTemplate>
+          <div
+            class="flex flex-col w-full bg-white rounded-lg shadow-md p-6 h-full"
+          >
+            <form
+              class="space-y-5 w-full h-full p-4 relative flex flex-col justify-between"
+            >
+              <ag-grid-angular
+                [rowData]="rowData"
+                [columnDefs]="columnDefs"
+                [gridOptions]="gridOptions"
+                class="ag-theme-alpine"
+                style="width: 100%; height: 400px"
+              >
+                <ng-template #actionsRenderer let-data let-node="node">
+                  <button
+                    class="btn btn-xs btn-primary"
+                    (click)="saveRow(node.rowIndex)"
+                  >
+                    Save
+                  </button>
+                  <button
+                    class="btn btn-xs btn-warning"
+                    (click)="editRow(node.rowIndex)"
+                  >
+                    Modify
+                  </button>
+                  <button
+                    class="btn btn-xs btn-danger"
+                    (click)="deleteRow(node.rowIndex)"
+                  >
+                    Delete
+                  </button>
+                </ng-template>
+              </ag-grid-angular>
+            </form>
+          </div>
+        </ng-template>
+
+        <!-- 🔹 Sidebar -->
+        <div
+          class="bg-white rounded-lg shadow-md p-6 hidden md:flex md:flex-col md:w-1/4 md:h-full"
+        >
+          <!-- Users container -->
+          <div class="flex-1 overflow-auto">
+            <!-- Loading Skeleton -->
+            <ng-container *ngIf="isLoadingEnquiry; else enquiryList">
+              <div
+                *ngFor="let s of [1,2,3,4,5]"
+                class="animate-pulse p-2 my-1 bg-gray-200 rounded h-6"
+              ></div>
+            </ng-container>
+
+            <!-- Customer List -->
+            <ng-template #enquiryList>
+              <div class="pt-2">
+                <ul *ngIf="enquires.length > 0; else noEnquiry">
+                  <li
+                    class="cursor-pointer hover:bg-gray-200 p-2 rounded my-1"
+                  ></li>
+                </ul>
+              </div>
+            </ng-template>
+
+            <!-- No Customers -->
+            <ng-template #noEnquiry
+              ><div class="text-gray-500 text-sm mt-2">
+                No Items found.
+              </div></ng-template
+            >
+          </div>
+
+          <!-- Search Box -->
+          <div class="mt-2">
+            <input
+              type="text"
+              placeholder="Search by name"
+              class="w-full p-2 border border-gray-300 rounded"
+            />
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

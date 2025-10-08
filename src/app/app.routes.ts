@@ -10,6 +10,7 @@ import { NotFound } from './pages/not-found/not-found';
 import { LoggedInRedirectGuard } from './services/logged-in-redirect.guard';
 import { UserRights } from './pages/superAdmin/Masters/user-rights/user-rights';
 import { Customer } from './pages/superAdmin/Masters/customer/customer';
+import { Enquiry } from './pages/superAdmin/Sales/enquiry/enquiry';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -43,6 +44,12 @@ export const routes: Routes = [
   {
     path: 's/customer',
     component: Customer,
+    canActivate: [AuthGuard],
+    data: { roles: [1] },
+  },
+  {
+    path: 's/enquiry',
+    component: Enquiry,
     canActivate: [AuthGuard],
     data: { roles: [1] },
   },
