@@ -114,7 +114,6 @@ export class AuthService {
     xsrfToken?: string,
     jwtToken?: string
   ) {
-    // Token is managed via HttpOnly cookie; no local storage for token
     localStorage.setItem('roleId', roleId.toString());
     this.xsrfToken = xsrfToken || null;
     this.jwtToken = jwtToken || null;
@@ -143,7 +142,6 @@ export class AuthService {
     return match ? decodeURIComponent(match[2]) : null;
   }
   isLoggedIn(): boolean {
-    // With cookie auth, consider calling a /auth/me endpoint; fallback to roleId presence
     return !!this.storage.get('roleId');
   }
 
