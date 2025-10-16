@@ -156,7 +156,6 @@ export class AuthService {
   }
 
   logout(): void {
-    // No token in localStorage when using cookies
     localStorage.removeItem('roleId');
     localStorage.removeItem('userId');
     localStorage.removeItem('organizationId');
