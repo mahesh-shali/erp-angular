@@ -29,4 +29,5 @@
 </ng-container>
 <ng-container *ngIf="isNotFoundPage()">
   <router-outlet></router-outlet>
+  <app-chat-widget *ngIf="authService.isLoggedIn()"></app-chat-widget>
 </ng-container>

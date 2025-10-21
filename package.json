@@ -32,6 +32,7 @@
     "@angular/platform-server": "^20.2.4",
     "@angular/router": "^20.0.3",
     "@angular/ssr": "^20.2.2",
+    "@microsoft/signalr": "^9.0.6",
     "@ngx-progressbar/http": "^5.3.2",
     "@tailwindcss/postcss": "^4.1.8",
     "ag-grid-angular": "^34.2.0",
@@ -42,6 +43,7 @@
     "nprogress": "^0.2.0",
     "postcss": "^8.5.4",
     "rxjs": "^7.8.0",
+    "socket.io-client": "^4.8.1",
     "tailwindcss": "^4.1.8",
     "tslib": "^2.7.0",
     "zone.js": "^0.15.0"

@@ -17,6 +17,7 @@ import { HttpClient } from '@angular/common/http';
 import { filter } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { ProgressConfigService } from './services/ProgressConfig.Service';
+import { ChatWidget } from './components/chat-widget/chat-widget';
 
 @Component({
   selector: 'app-root',
@@ -29,8 +30,9 @@ import { ProgressConfigService } from './services/ProgressConfig.Service';
     CommonModule,
     RouterModule,
     Subsidenavbar,
-    MatIconModule,
+    MatIconModule,  
     FormsModule,
+    ChatWidget,
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.scss'],

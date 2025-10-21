@@ -1,0 +1,47 @@
+<!-- Floating Chat Button -->
+<button
+  class="fixed bottom-6 right-6 bg-primary text-white p-4 rounded-full shadow-lg hover:scale-110 transition-transform duration-200"
+  (click)="toggleChat()"
+>
+  <i class="bi bi-chat-dots text-xl"></i>
+</button>
+
+<!-- Chat Window -->
+<div
+  *ngIf="isOpen"
+  class="fixed bottom-20 right-6 w-80 bg-base-200 shadow-xl rounded-2xl flex flex-col"
+>
+  <div
+    class="p-3 bg-primary text-white flex justify-between items-center rounded-t-2xl"
+  >
+    <span>ERP Chat</span>
+    <button class="btn btn-xs btn-ghost text-white" (click)="toggleChat()">
+      ✕
+    </button>
+  </div>
+
+  <div class="flex-1 p-3 overflow-y-auto max-h-64 space-y-2">
+    <div *ngFor="let msg of signalRService.messages">
+      <div [ngClass]="msg.user === user ? 'chat chat-end' : 'chat chat-start'">
+        <div
+          [ngClass]="msg.user === user
+            ? 'chat-bubble chat-bubble-primary'
+            : 'chat-bubble chat-bubble-secondary'"
+        >
+          <b>{{ msg.user }}:</b> {{ msg.text }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-3 border-t flex gap-2">
+    <input
+      type="text"
+      placeholder="Type a message..."
+      [(ngModel)]="input"
+      (keydown.enter)="sendMessage()"
+      class="input input-bordered w-full"
+    />
+    <button class="btn btn-primary" (click)="sendMessage()">Send</button>
+  </div>
+</div>
