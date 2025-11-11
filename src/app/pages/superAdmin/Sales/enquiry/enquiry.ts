@@ -43,7 +43,7 @@ export class Enquiry implements OnInit {
   isLoadingEnquiry = false;
   enquires: any[] = [];
   customers: any[] = [];
-  allCustomers: any[] = []; // for filtering
+  allCustomers: any[] = [];
   selectedCustomer: string = '';
   showDropdown = false;
   isLoadingCustomers = false;
@@ -56,7 +56,6 @@ export class Enquiry implements OnInit {
       field: 'name',
       headerName: 'Name',
       editable: true,
-      // context: { roleId: this.roleId },
       cellEditor: NameCellEditorComponent,
       cellEditorPopup: true,
       width: 400,
