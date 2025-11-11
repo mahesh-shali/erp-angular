@@ -37,20 +37,118 @@
             <form
               class="space-y-5 w-full h-full p-4 relative flex flex-col justify-between"
             >
-              <div>
-                <h2 class="text-2xl font-semibold mb-2">Enquiry</h2>
-                <div class="text-gray-600 mb-4 flex">
+              <div class="">
+                <div class="flex items-center gap-8 mb-4">
+                  <h2 class="text-2xl font-semibold mb-2">Enquiry</h2>
+                  <div class="">
+                    <div class="flex flex ml-4 gap-8">
+                      <div class="flex flex-row items-center gap-2">
+                        <label
+                          for="manufacturing"
+                          class="flex flex-row items-center gap-2 cursor-pointer"
+                        >
+                          <input
+                            type="radio"
+                            name="jobType"
+                            id="manufacturing"
+                            class="cursor-pointer"
+                          />
+                          Manufacturing
+                        </label>
+                      </div>
+                      <div class="flex flex-row items-center gap-2">
+                        <label
+                          for="labour"
+                          class="flex flex-row items-center gap-2 cursor-pointer"
+                        >
+                          <input
+                            type="radio"
+                            name="jobType"
+                            id="labour"
+                            class="cursor-pointer"
+                          />
+                          Labour
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-gray-600 mb-4 flex relative">
                   <div>
                     <div class="mb-4 space-y-2 flex flex-row gap-4">
-                      <div>
+                      <div
+                        class="relative w-full"
+                        (click)="onDocumentClick($event)"
+                      >
                         <label for="customerName">Customer Name</label>
                         <input
+                          #customerInput
                           type="text"
-                          class="w-full p-2 border border-gray-300 rounded mt-1"
+                          class="w-full p-2 border border-gray-300 rounded mt-1 pr-8"
                           name="customerName"
                           placeholder="Enter customer name"
+                          (focus)="loadCustomers()"
+                          [(ngModel)]="selectedCustomer"
+                          (input)="filterCustomers($event.target.value)"
+                          (click)="$event.stopPropagation()"
                         />
+
+                        <div
+                          *ngIf="isLoadingCustomers"
+                          class="absolute top-3/4 right-2 transform -translate-y-1/2"
+                        >
+                          <svg
+                            class="animate-spin h-5 w-5 text-gray-500"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              class="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              stroke-width="4"
+                            ></circle>
+                            <path
+                              class="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                            ></path>
+                          </svg>
+                        </div>
+
+                        <!-- Dropdown -->
+                        <div
+                          #dropdownList
+                          *ngIf="showDropdown"
+                          class="absolute z-50 w-full bg-white border border-gray-300 rounded mt-1 max-h-60 overflow-auto shadow-lg"
+                          (click)="$event.stopPropagation()"
+                        >
+                          <div
+                            *ngIf="isLoadingCustomers"
+                            class="p-2 text-center text-gray-500"
+                          >
+                            Loading...
+                          </div>
+                          <div
+                            *ngFor="let customer of customers"
+                            class="p-2 cursor-pointer hover:bg-gray-200"
+                            (click)="selectCustomer(customer)"
+                          >
+                            {{ customer.name }}
+                          </div>
+                          <div
+                            *ngIf="!isLoadingCustomers && customers.length === 0"
+                            class="p-2 text-gray-500"
+                          >
+                            No customers found.
+                          </div>
+                        </div>
                       </div>
+
                       <div>
                         <label for="enqNo">Enquiry No.</label>
                         <input

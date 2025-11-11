@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  HostListener,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import {
   ColDef,
   GridOptions,
@@ -12,6 +18,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AgGridModule } from 'ag-grid-angular';
 import { GridToolbarComponent } from 'src/app/services/component/GridToolbarComponent';
+import { EnquiryService } from 'src/app/services/enquiry.service';
+import { NameCellEditorComponent } from 'src/app/GridEditorService/name-cell-editor.component';
+import { CustomerService } from 'src/app/services/customer.service';
 
 @Component({
   selector: 'app-enquiry',
@@ -27,18 +36,32 @@ import { GridToolbarComponent } from 'src/app/services/component/GridToolbarComp
   styleUrls: ['./enquiry.scss'],
 })
 export class Enquiry implements OnInit {
+  @ViewChild('customerInput') customerInput!: ElementRef;
+  @ViewChild('dropdownList') dropdownList!: ElementRef;
+
   roleId: number | null = 1;
   isLoadingEnquiry = false;
   enquires: any[] = [];
+  customers: any[] = [];
+  allCustomers: any[] = []; // for filtering
+  selectedCustomer: string = '';
+  showDropdown = false;
+  isLoadingCustomers = false;
 
-  rowData = [
-    { id: 1, name: 'Item 1', price: 100 },
-    { id: 2, name: 'Item 2', price: 150 },
-  ];
+  rowData = [{ slno: 1, name: '', price: 0 }];
 
   columnDefs: ColDef[] = [
-    { field: 'id', headerName: 'ID', editable: false },
-    { field: 'name', headerName: 'Name', editable: true },
+    { field: 'slno', headerName: 'SL No.', editable: false },
+    {
+      field: 'name',
+      headerName: 'Name',
+      editable: true,
+      // context: { roleId: this.roleId },
+      cellEditor: NameCellEditorComponent,
+      cellEditorPopup: true,
+      width: 400,
+      resizable: false,
+    },
     { field: 'price', headerName: 'Price', editable: true },
   ];
 
@@ -46,10 +69,15 @@ export class Enquiry implements OnInit {
   gridApi!: GridApi;
   // gridColumnApi!: ColumnApi;
 
-  constructor() {
+  constructor(
+    private enquiryService: EnquiryService,
+    private customerService: CustomerService,
+    private el: ElementRef
+  ) {
     this.gridOptions = {
       stopEditingWhenCellsLoseFocus: true,
       singleClickEdit: false,
+      context: { roleId: this.roleId },
       onCellKeyDown: (event: CellKeyDownEvent) =>
         this.onCellKeyDownHandler(event),
     };
@@ -135,6 +163,53 @@ export class Enquiry implements OnInit {
   //   }
 
   // }
+
+  // onCellDoubleClicked(event: any) {
+  //   console.log('Cell double-clicked:', event);
+  // }
+
+  loadCustomers() {
+    if (this.allCustomers.length === 0) {
+      this.isLoadingCustomers = true;
+      this.customerService
+        .getCustomers(this.roleId ?? 1)
+        .subscribe((res: any) => {
+          const list = (res && (res.customers ?? res)) || [];
+          this.allCustomers = list;
+          this.customers = list;
+          this.showDropdown = true;
+          this.isLoadingCustomers = false;
+        });
+    } else {
+      this.customers = this.allCustomers;
+      this.showDropdown = true;
+    }
+  }
+
+  // Filter as user types
+  filterCustomers(value: string) {
+    this.customers = this.allCustomers.filter((c) =>
+      c.name.toLowerCase().includes(value.toLowerCase())
+    );
+    this.showDropdown = this.customers.length > 0;
+  }
+
+  selectCustomer(customer: any) {
+    this.selectedCustomer = customer.name;
+    this.showDropdown = false;
+  }
+
+  onDocumentClick(event: Event) {
+    const target = event.target as HTMLElement;
+    const inputEl = this.customerInput?.nativeElement;
+    const listEl = this.dropdownList?.nativeElement;
+
+    if (inputEl && listEl) {
+      if (!inputEl.contains(target) && !listEl.contains(target)) {
+        this.showDropdown = false;
+      }
+    }
+  }
 
   onCellKeyDownHandler(event: CellKeyDownEvent) {
     const keyEvent = event.event as KeyboardEvent;
@@ -249,7 +324,7 @@ export class Enquiry implements OnInit {
       return;
     }
 
-    const newRow = { id: this.rowData.length + 1, name: '', price: 0 };
+    const newRow = { slno: this.rowData.length + 1, name: '', price: 0 };
     this.rowData = [...this.rowData, newRow];
   }
 
