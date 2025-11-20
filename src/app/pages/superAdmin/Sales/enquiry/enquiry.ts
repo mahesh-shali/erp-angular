@@ -57,7 +57,7 @@ export class Enquiry implements OnInit {
       headerName: 'Name',
       editable: true,
       cellEditor: NameCellEditorComponent,
-      cellEditorPopup: true,
+      cellEditorPopup: false,
       width: 400,
       resizable: false,
     },
@@ -66,6 +66,7 @@ export class Enquiry implements OnInit {
 
   gridOptions: GridOptions = {};
   gridApi!: GridApi;
+  http: any;
   // gridColumnApi!: ColumnApi;
 
   constructor(
@@ -341,7 +342,21 @@ export class Enquiry implements OnInit {
   }
 
   saveAll() {
-    console.log('Save all data:', this.rowData);
+    const rows: { itemid: any; price: any }[] = [];
+
+    this.gridApi.forEachNode((node) => {
+      if (node.data.itemid) {
+        rows.push({
+          itemid: node.data.itemid,
+          price: node.data.price,
+        });
+      }
+    });
+
+    this.http.post('/api/enquiry', rows).subscribe({
+      next: () => alert('Saved!'),
+      error: (err: any) => console.error(err),
+    });
   }
 
   deleteSelected() {
