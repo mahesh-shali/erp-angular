@@ -131,7 +131,7 @@ export class Enquiry implements OnInit {
   //     return;
   //   }
 
-  //   // 🔹 Handle Delete key (remove current row)
+  //  
   //   if (keyEvent.key === 'Delete') {
   //     keyEvent.preventDefault();
 
