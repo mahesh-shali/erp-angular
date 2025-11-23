@@ -156,6 +156,7 @@
                           class="w-full p-2 border border-gray-300 rounded mt-1"
                           name="enqNo"
                           placeholder="Enter enquiry number"
+                          [(ngModel)]="enquiryNumber"
                         />
                       </div>
                     </div>
@@ -225,7 +226,7 @@
                 </ul>
               </div>
             </ng-template>
-            
+
             <ng-template #noEnquiry
               ><div class="text-gray-500 text-sm mt-2">
                 No Items found.

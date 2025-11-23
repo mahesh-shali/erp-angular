@@ -207,7 +207,13 @@ export class NameCellEditorComponent
       //   price: selectedItem.price,
       // });
       this.params.node.setDataValue('name', selectedItem.name);
+      this.params.node.setDataValue('itemid', selectedItem.id);
+      this.params.node.setDataValue('qty', selectedItem.qty);
       this.params.node.setDataValue('price', selectedItem.price);
+      this.params.node.setDataValue(
+        'amount',
+        (selectedItem.price || 0) * (selectedItem.qty || 0)
+      );
     }
     this.params.api.stopEditing();
   }

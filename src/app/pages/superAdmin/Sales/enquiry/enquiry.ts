@@ -43,6 +43,8 @@ export class Enquiry implements OnInit {
   isLoadingEnquiry = false;
   enquires: any[] = [];
   customers: any[] = [];
+  selectedCustomerId!: number;
+  selectedJobType: number = 1;
   allCustomers: any[] = [];
   selectedCustomer: string = '';
   showDropdown = false;
@@ -61,12 +63,66 @@ export class Enquiry implements OnInit {
       width: 400,
       resizable: false,
     },
-    { field: 'price', headerName: 'Price', editable: true },
+    {
+      field: 'qty',
+      headerName: 'Qty',
+      editable: true,
+      valueSetter: (params) => {
+        const newQty = Number(params.newValue) || 0;
+        params.data.qty = newQty;
+
+        // Auto-calculate
+        params.data.amount = newQty * (params.data.price || 0);
+
+        return true;
+      },
+    },
+    {
+      field: 'price',
+      headerName: 'Price',
+      editable: true,
+
+      valueSetter: (params) => {
+        const newPrice = Number(params.newValue) || 0;
+        params.data.price = newPrice;
+
+        // Auto-calculate
+        params.data.amount = newPrice * (params.data.qty || 0);
+
+        return true;
+      },
+      onCellValueChanged: (params) => {
+        const qty = Number(params.data.qty) || 0;
+        const price = Number(params.data.price) || 0;
+        params.data.amount = qty * price;
+
+        params.api.refreshCells({
+          rowNodes: [params.data.qty],
+          columns: ['amount'],
+        });
+      },
+    },
+    { field: 'amount', headerName: 'Amount', editable: false },
   ];
 
-  gridOptions: GridOptions = {};
+  gridOptions: GridOptions = {
+    onCellEditingStarted: (params) => {
+      if (params.colDef.field === 'price') {
+        const qty = Number(params.data.qty) || 0;
+        const price = Number(params.data.price) || 0;
+        params.data.amount = qty * price;
+
+        params.api.refreshCells({
+          rowNodes: [params.node],
+          columns: ['amount'],
+        });
+      }
+    },
+  };
   gridApi!: GridApi;
   http: any;
+  // selectedJobType: any;
+  enquiryNumber: any;
   // gridColumnApi!: ColumnApi;
 
   constructor(
@@ -342,20 +398,27 @@ export class Enquiry implements OnInit {
   }
 
   saveAll() {
-    const rows: { itemid: any; price: any }[] = [];
+    const payload = {
+      enqtype: this.selectedJobType, // 1 or 2
+      enqno: this.enquiryNumber, // e.g., "1"
+      custid: this.selectedCustomerId, // ID of selected customer
+      items: [] as any[],
+    };
 
     this.gridApi.forEachNode((node) => {
       if (node.data.itemid) {
-        rows.push({
-          itemid: node.data.itemid,
-          price: node.data.price,
+        payload.items.push({
+          itemid: node.data.itemid, // make sure itemid exists
+          qty: node.data.qty || 0,
+          rate: node.data.price || 0,
+          amount: node.data.amount || 0,
         });
       }
     });
 
-    this.http.post('/api/enquiry', rows).subscribe({
-      next: () => alert('Saved!'),
-      error: (err: any) => console.error(err),
+    this.enquiryService.saveEnquiry(payload).subscribe({
+      next: () => alert('Enquiry Saved Successfully!'),
+      error: (err) => console.error('Error saving enquiry:', err),
     });
   }
 

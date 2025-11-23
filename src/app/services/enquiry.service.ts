@@ -25,4 +25,12 @@ export class EnquiryService {
       withCredentials: true,
     }); // fallback
   }
+
+  saveEnquiry(payload: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/enquiry/create-enquiry`,
+      payload, // <-- send the payload here
+      { withCredentials: true }
+    );
+  }
 }
