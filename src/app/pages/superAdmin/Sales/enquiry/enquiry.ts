@@ -86,7 +86,6 @@ export class Enquiry implements OnInit {
         const newPrice = Number(params.newValue) || 0;
         params.data.price = newPrice;
 
-        // Auto-calculate
         params.data.amount = newPrice * (params.data.qty || 0);
 
         return true;
@@ -187,7 +186,7 @@ export class Enquiry implements OnInit {
   //     return;
   //   }
 
-  //  
+  //
   //   if (keyEvent.key === 'Delete') {
   //     keyEvent.preventDefault();
 
