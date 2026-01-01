@@ -45,7 +45,7 @@ export class Login implements OnInit {
 
   ngOnInit(): void {
     if (this.auth.isLoggedIn()) {
-      const roleId = this.auth.getRoleId(); // implement getRoleId() in AuthService
+      const roleId = this.auth.getRoleId();
       switch (roleId) {
         case 1:
           this.router.navigate(['/s/dashboard']);
