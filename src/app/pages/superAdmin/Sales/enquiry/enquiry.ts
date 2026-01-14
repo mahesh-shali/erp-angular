@@ -251,6 +251,7 @@ export class Enquiry implements OnInit {
 
   selectCustomer(customer: any) {
     this.selectedCustomer = customer.name;
+    this.selectedCustomerId = customer.id;
     this.showDropdown = false;
   }
 
